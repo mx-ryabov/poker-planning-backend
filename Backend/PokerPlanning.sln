@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Api", "PokerPlanning.Api\PokerPlanning.Api.csproj", "{F152ECE5-6D44-4F03-B1B2-94767B0F792C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Contracts", "PokerPlanning.Contracts\PokerPlanning.Contracts.csproj", "{6DD7026C-C476-4FB6-94E8-C4BA9F413F0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Domain", "PokerPlanning.Domain\PokerPlanning.Domain.csproj", "{5C4319B3-5AD8-4DE0-A630-D0F050844841}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Infrastructure", "PokerPlanning.Infrastructure\PokerPlanning.Infrastructure.csproj", "{E85ECBE1-DD74-4488-9524-0EE98CBF6540}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Application", "PokerPlanning.Application\PokerPlanning.Application.csproj", "{1EF16932-5A71-44B2-9D40-7E14F53186DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.SDK", "PokerPlanning.SDK\PokerPlanning.SDK.csproj", "{E9D14AD9-AEAF-484F-8937-4FCE0928A18E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F152ECE5-6D44-4F03-B1B2-94767B0F792C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F152ECE5-6D44-4F03-B1B2-94767B0F792C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F152ECE5-6D44-4F03-B1B2-94767B0F792C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F152ECE5-6D44-4F03-B1B2-94767B0F792C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DD7026C-C476-4FB6-94E8-C4BA9F413F0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DD7026C-C476-4FB6-94E8-C4BA9F413F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DD7026C-C476-4FB6-94E8-C4BA9F413F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DD7026C-C476-4FB6-94E8-C4BA9F413F0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C4319B3-5AD8-4DE0-A630-D0F050844841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C4319B3-5AD8-4DE0-A630-D0F050844841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C4319B3-5AD8-4DE0-A630-D0F050844841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C4319B3-5AD8-4DE0-A630-D0F050844841}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85ECBE1-DD74-4488-9524-0EE98CBF6540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85ECBE1-DD74-4488-9524-0EE98CBF6540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85ECBE1-DD74-4488-9524-0EE98CBF6540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85ECBE1-DD74-4488-9524-0EE98CBF6540}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EF16932-5A71-44B2-9D40-7E14F53186DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EF16932-5A71-44B2-9D40-7E14F53186DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EF16932-5A71-44B2-9D40-7E14F53186DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EF16932-5A71-44B2-9D40-7E14F53186DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9D14AD9-AEAF-484F-8937-4FCE0928A18E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9D14AD9-AEAF-484F-8937-4FCE0928A18E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9D14AD9-AEAF-484F-8937-4FCE0928A18E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9D14AD9-AEAF-484F-8937-4FCE0928A18E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

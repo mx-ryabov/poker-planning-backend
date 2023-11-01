@@ -1,0 +1,7 @@
+POST https://localhost:7051/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "maxim@ryabov.com",
+    "password": "123"
+}

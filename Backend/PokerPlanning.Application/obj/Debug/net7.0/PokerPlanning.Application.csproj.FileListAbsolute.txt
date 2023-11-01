@@ -1,0 +1,17 @@
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.Application.deps.json
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.Application.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.Application.pdb
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.Domain.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.Domain.pdb
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.csproj.AssemblyReference.cache
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.AssemblyInfoInputs.cache
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.AssemblyInfo.cs
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.csproj.CoreCompileInputs.cache
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.csproj.CopyComplete
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\refint\PokerPlanning.Application.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\PokerPlanning.Application.pdb
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\obj\Debug\net7.0\ref\PokerPlanning.Application.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.SDK.dll
+C:\Users\ROKO000000126\work\poker-planning\Backend\PokerPlanning.Application\bin\Debug\net7.0\PokerPlanning.SDK.pdb
