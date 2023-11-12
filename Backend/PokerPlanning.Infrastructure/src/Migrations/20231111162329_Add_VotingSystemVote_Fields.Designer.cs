@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PokerPlanning.Infrastructure.src.Persistence;
@@ -11,9 +12,11 @@ using PokerPlanning.Infrastructure.src.Persistence;
 namespace PokerPlanning.Infrastructure.Migrations
 {
     [DbContext(typeof(PokerPlanningDbContext))]
-    partial class PokerPlanningDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111162329_Add_VotingSystemVote_Fields")]
+    partial class Add_VotingSystemVote_Fields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,6 +57,13 @@ namespace PokerPlanning.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<decimal>("Order")
+                        .HasColumnType("decimal");
+
+                    b.Property<string>("Suit")
+                        .IsRequired()
+                        .HasColumnType("varchar(5)");
 
                     b.Property<string>("Value")
                         .IsRequired()
