@@ -30,6 +30,7 @@ public static class DependencyInjection
         var connectionString = configuration.GetSection(ConnectionStrings.SectionName).Get<ConnectionStrings>()?.PokerPlanningDbConnection;
         services.AddDbContext<PokerPlanningDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IVotingSystemRepository, VotingSystemRepository>();
         return services;
     }
 

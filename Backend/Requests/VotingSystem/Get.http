@@ -1,0 +1,3 @@
+GET https://localhost:7051/api/voting-system
+Content-Type: application/json
+
