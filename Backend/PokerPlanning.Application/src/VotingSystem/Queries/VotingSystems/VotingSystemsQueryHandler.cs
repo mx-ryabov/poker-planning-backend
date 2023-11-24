@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using MediatR;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.Results;
@@ -17,7 +15,7 @@ public class VotinSystemsQueryHandler :
     }
     public async Task<IEnumerable<VotingSystemResult>> Handle(VotingSystemsQuery request, CancellationToken cancellationToken)
     {
-        var votingSystems = _votingSystemRepository.Get();
+        var votingSystems = await _votingSystemRepository.Get();
         return votingSystems.Select(vs => new VotingSystemResult(
             Id: vs.Id,
             Name: vs.Name,

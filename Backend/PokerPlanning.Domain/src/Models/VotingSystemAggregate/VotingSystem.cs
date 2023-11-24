@@ -14,9 +14,9 @@ public class VotingSystem : AggregateRoot<Guid>
     public List<VotingSystemVote> Votes { get; set; } = new List<VotingSystemVote>();
     public User? Creator { get; set; } = null;
 
-    public static VotingSystem Create(string name, User? creator = null)
+    public static VotingSystem Create(string name, Guid? id = null, User? creator = null)
     {
-        return new(Guid.NewGuid())
+        return new(id ?? Guid.NewGuid())
         {
             Name = name,
             Creator = creator

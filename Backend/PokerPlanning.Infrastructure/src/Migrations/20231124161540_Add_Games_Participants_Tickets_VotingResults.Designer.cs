@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PokerPlanning.Infrastructure.src.Persistence;
@@ -11,9 +12,11 @@ using PokerPlanning.Infrastructure.src.Persistence;
 namespace PokerPlanning.Infrastructure.Migrations
 {
     [DbContext(typeof(PokerPlanningDbContext))]
-    partial class PokerPlanningDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124161540_Add_Games_Participants_Tickets_VotingResults")]
+    partial class Add_Games_Participants_Tickets_VotingResults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

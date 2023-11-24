@@ -13,8 +13,8 @@ public class VotingSystemVote : Entity<Guid>
     public required string Suit { get; set; }
     public required Guid VotingSystemId { get; set; }
 
-    public static VotingSystemVote Create(string value, decimal order, string suit, Guid votingSystemId)
+    public static VotingSystemVote Create(string value, decimal order, string suit, Guid votingSystemId, Guid? id = null)
     {
-        return new(Guid.NewGuid()) { Value = value, Order = order, Suit = suit, VotingSystemId = votingSystemId };
+        return new(id ?? Guid.NewGuid()) { Value = value, Order = order, Suit = suit, VotingSystemId = votingSystemId };
     }
 }

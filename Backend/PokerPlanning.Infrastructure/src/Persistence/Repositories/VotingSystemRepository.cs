@@ -13,10 +13,10 @@ public class VotingSystemRepository : IVotingSystemRepository
         _dbContext = dbContext;
     }
 
-    public IEnumerable<VotingSystem> Get()
+    public async Task<IEnumerable<VotingSystem>> Get()
     {
-        return _dbContext.VotingSystems
+        return await _dbContext.VotingSystems
             .Include(vs => vs.Votes)
-            .ToList();
+            .ToListAsync();
     }
 }

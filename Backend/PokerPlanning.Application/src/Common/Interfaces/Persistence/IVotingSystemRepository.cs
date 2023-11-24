@@ -4,5 +4,5 @@ namespace PokerPlanning.Application.src.Common.Interfaces.Persistence;
 
 public interface IVotingSystemRepository
 {
-    IEnumerable<VotingSystem> Get();
+    Task<IEnumerable<VotingSystem>> Get();
 }
