@@ -12,14 +12,14 @@ public class VotingSystem : AggregateRoot<Guid>
 
     public required string Name { get; set; }
     public List<VotingSystemVote> Votes { get; set; } = new List<VotingSystemVote>();
-    public User? Creator { get; set; } = null;
+    public User? Creator { get; set; }
 
     public static VotingSystem Create(string name, Guid? id = null, User? creator = null)
     {
         return new(id ?? Guid.NewGuid())
         {
             Name = name,
-            Creator = creator
+            Creator = creator,
         };
     }
 }

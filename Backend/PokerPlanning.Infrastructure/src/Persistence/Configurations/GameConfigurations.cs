@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PokerPlanning.Domain.src.Models.GameAggregate;
-using PokerPlanning.Domain.src.Models.TicketAggregate;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Configurations;
 

@@ -1,6 +1,7 @@
 using PokerPlanning.Domain.src.BaseModels;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
+using PokerPlanning.Domain.src.Models.UserAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
 
 namespace PokerPlanning.Domain.src.Models.GameAggregate;

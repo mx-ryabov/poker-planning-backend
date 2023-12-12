@@ -6,7 +6,10 @@ namespace PokerPlanning.Application.src.Game.Commands.Create;
 public record CreateGameCommand(
     string Name,
     Guid VotingSystemId,
-    bool? IsAutoRevealCards
+    CreateGameSettings Settings,
+    string CreatorName
 ) : IRequest<GameResult>;
 
-
+public record CreateGameSettings(
+    bool IsAutoRevealCards
+);

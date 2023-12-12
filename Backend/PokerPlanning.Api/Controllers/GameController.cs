@@ -23,7 +23,10 @@ public class GameController : ControllerBase
         var command = new CreateGameCommand(
             Name: req.Name,
             VotingSystemId: req.VotingSystemId,
-            IsAutoRevealCards: req.IsAutoRevealCards
+            Settings: new CreateGameSettings(
+                IsAutoRevealCards: req.IsAutoRevealCards
+            ),
+            CreatorName: "Should be implemented"
         );
 
         GameResult gameResult = await _sender.Send(command);
@@ -33,7 +36,7 @@ public class GameController : ControllerBase
             Name: gameResult.Name,
             Link: gameResult.Link,
             Settings: new GameSettingResponse(
-                IsAutoRevealCards: gameResult.IsAutoRevealCards
+                IsAutoRevealCards: gameResult.Settings.IsAutoRevealCards
             )
         );
         return Ok(response);

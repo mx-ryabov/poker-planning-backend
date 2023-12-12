@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PokerPlanning.Domain.src.BaseModels;
 using PokerPlanning.Domain.src.Models.GameAggregate;
@@ -6,10 +8,11 @@ using PokerPlanning.Domain.src.Models.TicketAggregate;
 using PokerPlanning.Domain.src.Models.UserAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities;
+using PokerPlanning.Infrastructure.src.Authentication;
 
 namespace PokerPlanning.Infrastructure.src.Persistence;
 
-public class PokerPlanningDbContext : DbContext
+public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public PokerPlanningDbContext()
     { }
@@ -17,8 +20,7 @@ public class PokerPlanningDbContext : DbContext
     public PokerPlanningDbContext(DbContextOptions<PokerPlanningDbContext> options)
         : base(options)
     { }
-
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> DomainUsers { get; set; }
     public DbSet<VotingSystem> VotingSystems { get; set; }
     public DbSet<VotingSystemVote> VotingSystemVotes { get; set; }
     public DbSet<Game> Games { get; set; }
@@ -32,6 +34,7 @@ public class PokerPlanningDbContext : DbContext
         modelBuilder
             .Ignore<IReadOnlyList<IDomainEvent>>()
             .ApplyConfigurationsFromAssembly(typeof(PokerPlanningDbContext).Assembly);
+
         SetSeedData(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
@@ -43,6 +46,12 @@ public class PokerPlanningDbContext : DbContext
     }
 
     private static void SetSeedData(ModelBuilder modelBuilder)
+    {
+        SeedVotingSystems(modelBuilder);
+        SeedUserRoles(modelBuilder);
+    }
+
+    private static void SeedVotingSystems(ModelBuilder modelBuilder)
     {
         var seedVotingSystems = new List<VotingSystem>();
         var seedVotingSystemVotes = new List<VotingSystemVote>();
@@ -70,5 +79,17 @@ public class PokerPlanningDbContext : DbContext
 
         modelBuilder.Entity<VotingSystem>().HasData(seedVotingSystems);
         modelBuilder.Entity<VotingSystemVote>().HasData(seedVotingSystemVotes);
+    }
+
+    private static void SeedUserRoles(ModelBuilder modelBuilder)
+    {
+        var roles = new List<IdentityRole<Guid>>
+        {
+            new("Guest") { Id = new Guid("91c050e7-0576-4961-8753-75a39473bcc0") },
+            new("Member") { Id = new Guid("6cbc5b47-1527-4259-b8d0-e6c0d0513c3b") },
+            new("Admin") { Id = new Guid("eca7a853-d704-4545-a31c-67a78e88d599") }
+        };
+
+        modelBuilder.Entity<IdentityRole<Guid>>().HasData(roles);
     }
 }
