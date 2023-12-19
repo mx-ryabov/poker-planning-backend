@@ -5,5 +5,5 @@ namespace PokerPlanning.Application.src.Common.Interfaces.Persistence;
 
 public interface IUserRepository
 {
-    Task<User> CreateGuest(GuestUser user, CancellationToken cancellationToken);
+    Task CreateGuest(GuestUser user, CancellationToken cancellationToken);
 }

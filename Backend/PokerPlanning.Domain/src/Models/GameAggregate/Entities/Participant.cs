@@ -7,13 +7,24 @@ namespace PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 
 public class Participant : Entity<Guid>
 {
-    public Participant(Guid id) : base(id)
+    protected Participant(Guid id) : base(id)
     {
     }
 
     public required string DisplayName { get; set; }
     public VotingSystemVote? Vote { get; set; }
     public User? User { get; set; } = null;
-    public required Game Game { get; set; }
+    public Game Game { get; set; } = null!;
+    public Guid GameId { get; set; }
     public required ParticipantRole Role { get; set; }
+
+    public static Participant Create(string displayName, ParticipantRole role, User? user)
+    {
+        return new(Guid.NewGuid())
+        {
+            DisplayName = displayName,
+            Role = role,
+            User = user
+        };
+    }
 }

@@ -318,6 +318,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.UserAggregate.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<int>("Role")
@@ -573,6 +574,9 @@ namespace PokerPlanning.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -587,6 +591,9 @@ namespace PokerPlanning.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -809,15 +816,6 @@ namespace PokerPlanning.Infrastructure.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("PokerPlanning.Domain.src.Models.UserAggregate.User", b =>
-                {
-                    b.HasOne("PokerPlanning.Infrastructure.src.Authentication.ApplicationUser", null)
-                        .WithOne("User")
-                        .HasForeignKey("PokerPlanning.Domain.src.Models.UserAggregate.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities.VotingSystemVote", b =>
                 {
                     b.HasOne("PokerPlanning.Domain.src.Models.VotingSystemAggregate.VotingSystem", null)
@@ -844,7 +842,15 @@ namespace PokerPlanning.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PokerPlanning.Domain.src.Models.UserAggregate.User", "User")
+                        .WithOne()
+                        .HasForeignKey("PokerPlanning.Infrastructure.src.Authentication.ApplicationUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingResult", b =>
@@ -864,12 +870,6 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.VotingSystemAggregate.VotingSystem", b =>
                 {
                     b.Navigation("Votes");
-                });
-
-            modelBuilder.Entity("PokerPlanning.Infrastructure.src.Authentication.ApplicationUser", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

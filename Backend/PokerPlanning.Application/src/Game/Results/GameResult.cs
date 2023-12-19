@@ -1,14 +1,14 @@
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
-using PokerPlanning.Domain.src.Models.UserAggregate;
 
-namespace PokerPlanning.Application.src.Game.Results;
+namespace PokerPlanning.Application.src.GameFeature.Results;
 
 public record GameResult(
     Guid Id,
     string Name,
     string Link,
     GameSettingsResult Settings,
-    List<GameParticipantResult> Participants
+    List<GameParticipantResult> Participants,
+    string MasterToken
 );
 
 public record GameSettingsResult(

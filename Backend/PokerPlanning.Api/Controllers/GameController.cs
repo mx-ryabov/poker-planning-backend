@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PokerPlanning.Application.src.Game.Commands.Create;
-using PokerPlanning.Application.src.Game.Results;
+using PokerPlanning.Application.src.GameFeature.Commands.Create;
+using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Contracts.src.Game;
 
 namespace PokerPlanning.Api.Controllers;
@@ -18,7 +18,7 @@ public class GameController : ControllerBase
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Create(GameRequest req)
+    public async Task<ActionResult> Create([FromBody] GameRequest req)
     {
         var command = new CreateGameCommand(
             Name: req.Name,
@@ -26,7 +26,7 @@ public class GameController : ControllerBase
             Settings: new CreateGameSettings(
                 IsAutoRevealCards: req.IsAutoRevealCards
             ),
-            CreatorName: "Should be implemented"
+            CreatorName: req.CreatorName
         );
 
         GameResult gameResult = await _sender.Send(command);
@@ -37,7 +37,8 @@ public class GameController : ControllerBase
             Link: gameResult.Link,
             Settings: new GameSettingResponse(
                 IsAutoRevealCards: gameResult.Settings.IsAutoRevealCards
-            )
+            ),
+            MasterToken: gameResult.MasterToken
         );
         return Ok(response);
     }

@@ -22,7 +22,7 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
             });
         builder.HasOne(g => g.VotingSystem)
             .WithMany()
-            .HasForeignKey("VotingSystemId")
+            .HasForeignKey(g => g.VotingSystemId)
             .IsRequired();
         builder.HasMany(g => g.Participants)
             .WithOne(p => p.Game)

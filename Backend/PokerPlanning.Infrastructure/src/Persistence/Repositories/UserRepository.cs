@@ -1,9 +1,9 @@
+
 using Microsoft.AspNetCore.Identity;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Domain.src.Models.UserAggregate;
-using PokerPlanning.Domain.src.Models.UserAggregate.Enums;
 using PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate;
 using PokerPlanning.Infrastructure.src.Authentication;
+using PokerPlanning.Infrastructure.src.Exceptions.ApplicationUser;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Repositories;
 
@@ -18,19 +18,18 @@ public class UserRepository : IUserRepository
         _userManager = userManager;
     }
 
-    public async Task<User> CreateGuest(GuestUser user, CancellationToken cancellationToken)
+    public async Task CreateGuest(GuestUser user, CancellationToken cancellationToken)
     {
         await _dbContext.AddAsync(user, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
 
-        var applicationUser = new ApplicationUser($"guest{Guid.NewGuid()}", user, new IdentityRole<Guid>("Guest"));
-        var result = await _userManager.CreateAsync(applicationUser, "111");
+        var role = new IdentityRole<Guid>("Guest");
+        var applicationUser = new ApplicationUser($"guest{Guid.NewGuid()}", user, role);
+        var result = await _userManager.CreateAsync(applicationUser, "111111");
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-
+            var errors = String.Join("; ", result.Errors.Select(e => e.Description));
+            throw new ApplicationUserCreationException(errors);
         }
-
-        return user;
     }
 }
