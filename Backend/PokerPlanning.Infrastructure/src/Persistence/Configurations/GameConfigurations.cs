@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PokerPlanning.Domain.src.Models.GameAggregate;
-using PokerPlanning.Domain.src.Models.TicketAggregate;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Configurations;
 
@@ -23,7 +22,7 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
             });
         builder.HasOne(g => g.VotingSystem)
             .WithMany()
-            .HasForeignKey("VotingSystemId")
+            .HasForeignKey(g => g.VotingSystemId)
             .IsRequired();
         builder.HasMany(g => g.Participants)
             .WithOne(p => p.Game)

@@ -19,12 +19,7 @@ public class VotinSystemsQueryHandler :
         return votingSystems.Select(vs => new VotingSystemResult(
             Id: vs.Id,
             Name: vs.Name,
-            Creator: vs.Creator is null ? null : new UserResult(
-                Id: vs.Creator.Id,
-                FirstName: vs.Creator.FirstName,
-                LastName: vs.Creator.LastName,
-                Email: vs.Creator.Email
-            ),
+            Creator: null,
             Votes: vs.Votes.Select(vsVote => new VotingSystemVoteResult(
                 Id: vsVote.Id,
                 Value: vsVote.Value,

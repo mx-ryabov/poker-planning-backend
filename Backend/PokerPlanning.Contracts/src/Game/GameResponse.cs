@@ -4,7 +4,8 @@ public record GameResponse(
     Guid Id,
     string Name,
     string Link,
-    GameSettingResponse Settings
+    GameSettingResponse Settings,
+    string MasterToken
 );
 
 public record GameSettingResponse(

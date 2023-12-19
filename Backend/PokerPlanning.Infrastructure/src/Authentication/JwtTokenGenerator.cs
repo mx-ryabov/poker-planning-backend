@@ -21,25 +21,27 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtSettings = jwtOptions.Value;
     }
 
-    public string GenerateToken(Guid userId, string firstName, string lastName)
+    public string GenerateToken(string displayName, Guid guestId, string role)
     {
+        var claims = new List<Claim>
+        {
+            new (ClaimTypes.Name, displayName),
+            new (ClaimTypes.NameIdentifier, guestId.ToString()),
+            new (ClaimTypes.Role, role),
+            new("UniqueName", Guid.NewGuid().ToString())
+        };
+
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
                 SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.GivenName, firstName),
-            new Claim(JwtRegisteredClaimNames.FamilyName, lastName),
-            new Claim(JwtRegisteredClaimNames.UniqueName, Guid.NewGuid().ToString())
-        };
 
         var securityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
             claims: claims,
+            audience: _jwtSettings.Audience,
             signingCredentials: signingCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(securityToken);

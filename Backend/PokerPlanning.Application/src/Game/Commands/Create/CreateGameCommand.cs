@@ -1,12 +1,15 @@
 using MediatR;
-using PokerPlanning.Application.src.Game.Results;
+using PokerPlanning.Application.src.GameFeature.Results;
 
-namespace PokerPlanning.Application.src.Game.Commands.Create;
+namespace PokerPlanning.Application.src.GameFeature.Commands.Create;
 
 public record CreateGameCommand(
     string Name,
     Guid VotingSystemId,
-    bool? IsAutoRevealCards
+    CreateGameSettings Settings,
+    string CreatorName
 ) : IRequest<GameResult>;
 
-
+public record CreateGameSettings(
+    bool IsAutoRevealCards
+);

@@ -1,31 +1,35 @@
+
+using Microsoft.AspNetCore.Identity;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Domain.src.Models.UserAggregate;
+using PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate;
+using PokerPlanning.Infrastructure.src.Authentication;
+using PokerPlanning.Infrastructure.src.Exceptions.ApplicationUser;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Repositories;
 
 public class UserRepository : IUserRepository
 {
     private readonly PokerPlanningDbContext _dbContext;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserRepository(PokerPlanningDbContext dbContext)
+    public UserRepository(PokerPlanningDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
         _dbContext = dbContext;
-    }
-    private static readonly List<User> _users = new();
-
-    public void Add(User user)
-    {
-        _dbContext.Add(user);
-        _dbContext.SaveChanges();
+        _userManager = userManager;
     }
 
-    public User? GetUserByEmail(string email)
+    public async Task CreateGuest(GuestUser user, CancellationToken cancellationToken)
     {
-        return _users.SingleOrDefault(u => u.Email == email);
-    }
+        await _dbContext.AddAsync(user, cancellationToken);
 
-    public User? GetUserById(Guid id)
-    {
-        return _users.SingleOrDefault(u => u.Id == id);
+        var role = new IdentityRole<Guid>("Guest");
+        var applicationUser = new ApplicationUser($"guest{Guid.NewGuid()}", user, role);
+        var result = await _userManager.CreateAsync(applicationUser, "111111");
+
+        if (!result.Succeeded)
+        {
+            var errors = String.Join("; ", result.Errors.Select(e => e.Description));
+            throw new ApplicationUserCreationException(errors);
+        }
     }
 }

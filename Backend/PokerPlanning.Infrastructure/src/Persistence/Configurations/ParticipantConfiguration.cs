@@ -19,7 +19,7 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
             .IsRequired(false);
         builder.HasOne(p => p.Game)
             .WithMany(g => g.Participants)
-            .HasForeignKey("GameId")
+            .HasForeignKey(p => p.GameId)
             .IsRequired();
         builder.Property(p => p.Role)
             .HasConversion<string>()

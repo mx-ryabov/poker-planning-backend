@@ -1,7 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PokerPlanning.Application.src.Authentication.Commands.Register;
-using PokerPlanning.Application.src.Authentication.Queries.Login;
 using PokerPlanning.Application.src.Services.Authentication;
 using PokerPlanning.Contracts.src.Authentication;
 
@@ -17,32 +15,6 @@ public class AuthenticationController : ControllerBase
     public AuthenticationController(ISender mediator)
     {
         _mediator = mediator;
-    }
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequest request)
-    {
-        var command = new RegisterCommand(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Password);
-
-        AuthenticationResult authResult = await _mediator.Send(command);
-
-        return Ok(MapAuthResult(authResult));
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
-    {
-        var query = new LoginQuery(
-            request.Email,
-            request.Password);
-
-        AuthenticationResult authResult = await _mediator.Send(query);
-
-        return Ok(MapAuthResult(authResult));
     }
 
     private static AuthenticationResponse MapAuthResult(AuthenticationResult authResult)
