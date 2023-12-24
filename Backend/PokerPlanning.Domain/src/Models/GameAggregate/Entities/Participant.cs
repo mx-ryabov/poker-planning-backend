@@ -14,6 +14,7 @@ public class Participant : Entity<Guid>
     public required string DisplayName { get; set; }
     public VotingSystemVote? Vote { get; set; }
     public User? User { get; set; } = null;
+    public Guid? UserId { get; set; } = null;
     public Game Game { get; set; } = null!;
     public Guid GameId { get; set; }
     public required ParticipantRole Role { get; set; }

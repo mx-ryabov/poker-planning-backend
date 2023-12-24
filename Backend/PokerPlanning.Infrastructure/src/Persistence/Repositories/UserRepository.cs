@@ -24,7 +24,7 @@ public class UserRepository : IUserRepository
 
         var role = new IdentityRole<Guid>("Guest");
         var applicationUser = new ApplicationUser($"guest{Guid.NewGuid()}", user, role);
-        var result = await _userManager.CreateAsync(applicationUser, "111111");
+        var result = await _userManager.CreateAsync(applicationUser);
 
         if (!result.Succeeded)
         {

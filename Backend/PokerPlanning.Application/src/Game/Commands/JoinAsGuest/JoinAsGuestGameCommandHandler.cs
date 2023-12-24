@@ -2,22 +2,21 @@ using MediatR;
 using PokerPlanning.Application.src.Common.Interfaces.Authentication;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Results;
-using PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate;
-using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
+using PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate;
 
-namespace PokerPlanning.Application.src.GameFeature.Commands.Create;
+namespace PokerPlanning.Application.src.GameFeature.Commands.JoinAsGuest;
 
-public class CreateGameCommandHandler :
-    IRequestHandler<CreateGameCommand, CreateGameResult>
+public class JoinAsGuestGameCommandHandler :
+    IRequestHandler<JoinAsGuestGameCommand, JoinAsGuestGameResult>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserRepository _userRepository;
     private readonly IGameRepository _gameRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateGameCommandHandler(
+    public JoinAsGuestGameCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
         IUserRepository userRepository,
         IGameRepository gameRepository,
@@ -29,24 +28,16 @@ public class CreateGameCommandHandler :
         _gameRepository = gameRepository;
         _unitOfWork = unitOfWork;
     }
-
-    public async Task<CreateGameResult> Handle(CreateGameCommand request, CancellationToken cancellationToken)
+    public async Task<JoinAsGuestGameResult> Handle(JoinAsGuestGameCommand request, CancellationToken cancellationToken)
     {
-        var guest = GuestUser.Create(request.CreatorName);
-        var master = Participant.Create(guest.DisplayName, ParticipantRole.Master, guest);
-        var game = Game.Create(
-            name: request.Name,
-            link: Guid.NewGuid().ToString(),
-            settings: new GameSettings() { IsAutoRevealCards = request.Settings.IsAutoRevealCards },
-            votingSystemId: request.VotingSystemId,
-            master: master
-        );
+        var guest = GuestUser.Create(request.DisplayName);
+        var member = Participant.Create(guest.DisplayName, ParticipantRole.VotingMember, guest);
 
         await _unitOfWork.BeginAsync(cancellationToken);
         try
         {
             await _userRepository.CreateGuest(guest, cancellationToken);
-            await _gameRepository.Create(game, cancellationToken);
+            await _gameRepository.AddParticipant(request.gameId, member, cancellationToken);
             await _unitOfWork.SaveAsync(cancellationToken);
         }
         catch (Exception)
@@ -60,20 +51,6 @@ public class CreateGameCommandHandler :
         // TODO: consider moving the token generation to the controller level (probably becuase it shouldn't be in Application/Domain levels at all)
         var token = _jwtTokenGenerator.GenerateToken(guest.DisplayName, guest.Id, guest.Role.ToString());
 
-        return new CreateGameResult(
-            Id: game.Id,
-            Name: game.Name,
-            Link: game.Link,
-            Settings: new GameSettingsResult(game.Settings.IsAutoRevealCards),
-            Participants: game.Participants.Select(
-                p => new GameParticipantResult(
-                    p.Id,
-                    p.DisplayName,
-                    p.Role,
-                    p.User?.Id
-                )
-            ).ToList(),
-            MasterToken: token
-        );
+        return new JoinAsGuestGameResult(token);
     }
 }

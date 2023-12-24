@@ -4,7 +4,7 @@ using PokerPlanning.Application.src.VotingSystemNS.Queries.VotingSystems;
 namespace PokerPlanning.Api.Controllers;
 
 [ApiController]
-[Route("api/voting-system")]
+[Route("api/votingSystem")]
 public class VotingSystemController : ControllerBase
 {
     private readonly ISender _sender;

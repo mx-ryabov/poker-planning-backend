@@ -1,13 +1,13 @@
 namespace PokerPlanning.Contracts.src.Game;
 
-public record GameResponse(
+public record CreateGameResponse(
     Guid Id,
     string Name,
     string Link,
-    GameSettingResponse Settings,
+    CreateGameSettingResponse Settings,
     string MasterToken
 );
 
-public record GameSettingResponse(
+public record CreateGameSettingResponse(
     bool IsAutoRevealCards
 );

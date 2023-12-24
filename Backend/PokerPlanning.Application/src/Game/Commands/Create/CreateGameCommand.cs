@@ -8,7 +8,7 @@ public record CreateGameCommand(
     Guid VotingSystemId,
     CreateGameSettings Settings,
     string CreatorName
-) : IRequest<GameResult>;
+) : IRequest<CreateGameResult>;
 
 public record CreateGameSettings(
     bool IsAutoRevealCards

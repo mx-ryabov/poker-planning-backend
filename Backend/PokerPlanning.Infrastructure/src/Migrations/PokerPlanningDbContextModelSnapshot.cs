@@ -357,7 +357,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                     b.HasIndex("VotingSystemId");
 
-                    b.ToTable("VotingSystemVotes");
+                    b.ToTable("VotingSystemVotes", (string)null);
 
                     b.HasData(
                         new
@@ -750,7 +750,7 @@ namespace PokerPlanning.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.Settings#PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -760,13 +760,13 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                             b1.HasKey("GameId");
 
-                            b1.ToTable("Games");
+                            b1.ToTable("Games", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
                         });
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -784,14 +784,14 @@ namespace PokerPlanning.Infrastructure.Migrations
                             b1.HasIndex("TicketId")
                                 .IsUnique();
 
-                            b1.ToTable("Games");
+                            b1.ToTable("Games", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
 
                             b1.HasOne("PokerPlanning.Domain.src.Models.TicketAggregate.Ticket", "Ticket")
                                 .WithOne()
-                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
+                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
 
                             b1.Navigation("Ticket");
                         });

@@ -1,6 +1,6 @@
 namespace PokerPlanning.Contracts.src.Game;
 
-public record GameRequest(
+public record CreateGameRequest(
     string Name,
     Guid VotingSystemId,
     string CreatorName,

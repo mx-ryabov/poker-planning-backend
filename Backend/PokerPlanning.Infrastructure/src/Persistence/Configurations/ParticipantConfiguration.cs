@@ -15,7 +15,7 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
             .IsRequired(false);
         builder.HasOne(p => p.User)
             .WithMany()
-            .HasForeignKey("UserId")
+            .HasForeignKey(p => p.UserId)
             .IsRequired(false);
         builder.HasOne(p => p.Game)
             .WithMany(g => g.Participants)
