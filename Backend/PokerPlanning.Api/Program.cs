@@ -1,4 +1,5 @@
 using PokerPlanning.Api;
+using PokerPlanning.Api.Hubs;
 using PokerPlanning.Application;
 using PokerPlanning.Infrastructure;
 
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
         .AddPresentation()
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
+
+    builder.Services.AddSignalR();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     /*builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +31,7 @@ var app = builder.Build();
     app.UseAuthorization();
     app.UseExceptionHandler("/error");
     app.UseHttpsRedirection();
+    app.MapHub<GameHub>("/game-hub");
     app.MapControllers();
     app.Run();
 }

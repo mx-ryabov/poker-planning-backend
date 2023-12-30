@@ -37,4 +37,11 @@ public class GameRepository : IGameRepository
             .Include(g => g.Tickets)
             .SingleAsync(g => g.Id == gameId, cancellationToken);
     }
+
+    public async Task<Participant> GetParticipant(Guid gameId, Guid userId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Participants
+            .Include(p => p.Vote)
+            .SingleAsync(p => p.GameId == gameId && p.UserId == userId, cancellationToken);
+    }
 }

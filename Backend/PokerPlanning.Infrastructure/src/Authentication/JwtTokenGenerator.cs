@@ -21,16 +21,20 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtSettings = jwtOptions.Value;
     }
 
-    public string GenerateToken(string displayName, Guid guestId, string role)
+    public string GenerateToken(string displayName, Guid userId, string role)
     {
         var claims = new List<Claim>
         {
             new (ClaimTypes.Name, displayName),
-            new (ClaimTypes.NameIdentifier, guestId.ToString()),
+            new (ClaimTypes.NameIdentifier, userId.ToString()),
             new (ClaimTypes.Role, role),
-            new("UniqueName", Guid.NewGuid().ToString())
         };
 
+        return GenerateToken(claims);
+    }
+
+    private string GenerateToken(List<Claim> claims)
+    {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
