@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PokerPlanning.Application.src.Common.DTO.GameFeature;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;

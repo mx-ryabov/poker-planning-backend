@@ -1,11 +1,16 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using PokerPlanning.Api.Hubs;
+using PokerPlanning.Application.src.GameFeature.Commands.ChangeVotingProcess;
 using PokerPlanning.Application.src.GameFeature.Commands.Create;
 using PokerPlanning.Application.src.GameFeature.Commands.JoinAsGuest;
 using PokerPlanning.Application.src.GameFeature.Queries.GetGame;
 using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Contracts.src.Game;
+using PokerPlanning.Contracts.src.GameHub;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -14,15 +19,17 @@ namespace PokerPlanning.Api.Controllers;
 public class GameController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly IHubContext<GameHub> _hubContext;
 
-    public GameController(ISender sender)
+    public GameController(ISender sender, IHubContext<GameHub> hubContext)
     {
         _sender = sender;
+        _hubContext = hubContext;
     }
 
-    [HttpGet("getById")]
+    [HttpGet("{gameId}")]
     [Authorize]
-    public async Task<ActionResult> Get([FromQuery] Guid gameId)
+    public async Task<ActionResult> Get([FromRoute] Guid gameId)
     {
         GetGameResult gameResult = await _sender.Send(new GetGameQuery(gameId));
         return Ok(gameResult);
@@ -54,10 +61,35 @@ public class GameController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("joinAsGuest")]
-    public async Task<ActionResult> JoinAsGuest([FromBody] JoinAsGuestRequest req)
+    [HttpPost("{gameId}/join-as-guest")]
+    public async Task<ActionResult> JoinAsGuest([FromBody] JoinAsGuestRequest req, [FromRoute] Guid gameId)
     {
-        JoinAsGuestGameResult joinAsGuestResult = await _sender.Send(new JoinAsGuestGameCommand(req.GameId, req.DisplayName));
+        JoinAsGuestGameResult joinAsGuestResult = await _sender.Send(new JoinAsGuestGameCommand(gameId, req.DisplayName));
         return Ok(joinAsGuestResult);
+    }
+
+    [HttpPut("{gameId}/voting-process")]
+    [Authorize]
+    public async Task<ActionResult> Voting([FromRoute] Guid gameId, [FromBody] ChangeVotingProcessRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+
+        await _sender.Send(new ChangeVotingProcessCommand(
+            GameId: gameId,
+            UserId: new Guid(userId),
+            IsActive: request.IsActive,
+            TicketId: request.TicketId
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                "VotingProcessChanged",
+                new VotingProcessChangedResponse(
+                    request.IsActive,
+                    request.TicketId
+                )
+            );
+
+        return Ok();
     }
 }
