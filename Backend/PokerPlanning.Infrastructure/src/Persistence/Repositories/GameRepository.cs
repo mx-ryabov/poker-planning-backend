@@ -15,13 +15,9 @@ public class GameRepository : IGameRepository
         _dbContext = dbContext;
     }
 
-    public async Task AddParticipant(Guid gameId, Participant participant, CancellationToken cancellationToken)
+    public async Task CreateParticipant(Participant participant, CancellationToken cancellationToken)
     {
         await _dbContext.Participants.AddAsync(participant, cancellationToken);
-        var game = await _dbContext.Games
-            .Include(g => g.Participants)
-            .SingleAsync(g => g.Id == gameId, cancellationToken);
-        game.Participants.Add(participant);
     }
 
     public async Task Create(Game game, CancellationToken cancellationToken)

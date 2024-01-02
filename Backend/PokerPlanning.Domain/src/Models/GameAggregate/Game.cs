@@ -47,7 +47,7 @@ public class Game : AggregateRoot<Guid>
             {
                 return new UpdateResult(
                     false,
-                    new() { "This participant isn't allowed to change the voting process." }
+                    new() { "This user isn't allowed to change the voting process." }
                 );
             }
         }
@@ -60,6 +60,20 @@ public class Game : AggregateRoot<Guid>
         }
 
         VotingProcess = votingProcess;
+        return new UpdateResult(true);
+    }
+
+    public UpdateResult AddParticipant(Participant participant)
+    {
+        if (Participants.Count >= 10)
+        {
+            return new UpdateResult(
+                false,
+                new() { "The maximum number of participants has been exceeded." }
+            );
+        }
+
+        Participants.Add(participant);
         return new UpdateResult(true);
     }
 }

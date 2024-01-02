@@ -1,6 +1,7 @@
 using MediatR;
 using PokerPlanning.Application.src.Common.Interfaces.Authentication;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
+using PokerPlanning.Application.src.GameFeature.Errors;
 using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
@@ -31,13 +32,21 @@ public class JoinAsGuestGameCommandHandler :
     public async Task<JoinAsGuestGameResult> Handle(JoinAsGuestGameCommand request, CancellationToken cancellationToken)
     {
         var guest = GuestUser.Create(request.DisplayName);
-        var member = Participant.Create(guest.DisplayName, ParticipantRole.VotingMember, guest);
 
         await _unitOfWork.BeginAsync(cancellationToken);
         try
         {
             await _userRepository.CreateGuest(guest, cancellationToken);
-            await _gameRepository.AddParticipant(request.gameId, member, cancellationToken);
+
+            var participant = Participant.Create(guest.DisplayName, ParticipantRole.VotingMember, guest);
+            await _gameRepository.CreateParticipant(participant, cancellationToken);
+
+            var game = await _gameRepository.Get(request.gameId, cancellationToken);
+            var result = game.AddParticipant(participant);
+            if (!result.Success)
+            {
+                throw new AddParticipantException(String.Join("; ", result.Errors));
+            }
             await _unitOfWork.SaveAsync(cancellationToken);
         }
         catch (Exception)

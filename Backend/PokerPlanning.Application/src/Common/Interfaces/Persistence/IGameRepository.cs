@@ -7,6 +7,6 @@ public interface IGameRepository
 {
     Task<Game> Get(Guid gameId, CancellationToken cancellationToken);
     Task Create(Game game, CancellationToken cancellationToken);
-    Task AddParticipant(Guid gameId, Participant participant, CancellationToken cancellationToken);
+    Task CreateParticipant(Participant participant, CancellationToken cancellationToken);
     Task<Participant> GetParticipant(Guid gameId, Guid userId, CancellationToken cancellationToken);
 }
