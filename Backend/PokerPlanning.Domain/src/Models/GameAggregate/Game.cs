@@ -4,6 +4,7 @@ using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
+using PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities;
 
 namespace PokerPlanning.Domain.src.Models.GameAggregate;
 
@@ -37,25 +38,14 @@ public class Game : AggregateRoot<Guid>
         };
     }
 
-    public UpdateResult ChangeVotingProcess(VotingProcess votingProcess, Guid changerUserId)
+    public UpdateResult ChangeVotingProcess(VotingProcess votingProcess, Participant participant)
     {
-        try
-        {
-            var participant = Participants.Single(p => p.UserId == changerUserId);
-            var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
-            if (!allowedRolesForChanging.Contains(participant.Role))
-            {
-                return new UpdateResult(
-                    false,
-                    new() { "This user isn't allowed to change the voting process." }
-                );
-            }
-        }
-        catch (Exception)
+        var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
+        if (!allowedRolesForChanging.Contains(participant.Role))
         {
             return new UpdateResult(
                 false,
-                new() { "There are no participants with this user id." }
+                new() { "This user isn't allowed to change the voting process." }
             );
         }
 

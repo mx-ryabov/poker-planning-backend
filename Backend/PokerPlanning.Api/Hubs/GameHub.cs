@@ -31,7 +31,7 @@ public class GameHub : Hub
             GameId: new Guid(gameId),
             UserId: new Guid(userId)
         ));
-        await Clients.Group(gameId).SendAsync("ParticipantJoined", participantResult);
+        await Clients.Group(gameId).SendAsync(GameHubMethods.ParticipantJoined, participantResult);
         await base.OnConnectedAsync();
     }
 
@@ -42,8 +42,16 @@ public class GameHub : Hub
         var userId = Context.UserIdentifier;
         if (gameId != null && userId != null)
         {
-            await Clients.Group(gameId).SendAsync("ParticipantLeft", new ParticipantLeftResponse(UserId: userId));
+            await Clients.Group(gameId).SendAsync(GameHubMethods.ParticipantLeft, new ParticipantLeftResponse(UserId: userId));
         }
         await base.OnDisconnectedAsync(exception);
     }
+}
+
+public static class GameHubMethods
+{
+    public static readonly string ParticipantJoined = "ParticipantJoined";
+    public static readonly string ParticipantLeft = "ParticipantLeft";
+    public static readonly string VotingProcessChanged = "VotingProcessChanged";
+    public static readonly string ParticipantVoted = "ParticipantVoted";
 }

@@ -39,6 +39,7 @@ public class GameRepository : IGameRepository
     {
         return await _dbContext.Participants
             .Include(p => p.Vote)
+            .Include(p => p.Game)
             .SingleAsync(p => p.GameId == gameId && p.UserId == userId, cancellationToken);
     }
 }

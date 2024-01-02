@@ -19,14 +19,14 @@ public class ChangeVotingProcessCommandHandler : IRequestHandler<ChangeVotingPro
 
     public async Task Handle(ChangeVotingProcessCommand command, CancellationToken cancellationToken)
     {
-        var game = await _gameRepository.Get(command.GameId, cancellationToken) ?? throw new NotFoundException("Game");
-
         var updatedVotingProcess = new VotingProcess()
         {
             IsActive = command.IsActive,
             TicketId = command.TicketId
         };
-        var result = game.ChangeVotingProcess(updatedVotingProcess, command.UserId);
+        var participant = await _gameRepository.GetParticipant(command.GameId, command.UserId, cancellationToken) ?? throw new NotFoundException("Participant");
+        var game = participant.Game;
+        var result = game.ChangeVotingProcess(updatedVotingProcess, participant);
 
         if (!result.Success)
         {

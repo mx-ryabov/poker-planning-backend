@@ -1,4 +1,5 @@
 using PokerPlanning.Domain.src.BaseModels;
+using PokerPlanning.Domain.src.Common;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.UserAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities;
@@ -13,6 +14,7 @@ public class Participant : Entity<Guid>
 
     public required string DisplayName { get; set; }
     public VotingSystemVote? Vote { get; set; }
+    public Guid? VoteId { get; set; }
     public User? User { get; set; } = null;
     public Guid? UserId { get; set; } = null;
     public Game Game { get; set; } = null!;
@@ -27,5 +29,18 @@ public class Participant : Entity<Guid>
             Role = role,
             User = user
         };
+    }
+
+    public UpdateResult DoVote(Guid? voteId)
+    {
+        if (!Game.VotingProcess.IsActive)
+        {
+            return new UpdateResult(
+                false,
+                new() { "The voting process is inactive." }
+            );
+        }
+        VoteId = voteId;
+        return new UpdateResult(true);
     }
 }

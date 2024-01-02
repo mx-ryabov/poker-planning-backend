@@ -11,7 +11,7 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
         builder.Property(p => p.DisplayName).HasColumnType("varchar(255)").IsRequired();
         builder.HasOne(p => p.Vote)
             .WithMany()
-            .HasForeignKey("VotingSystemVoteId")
+            .HasForeignKey(p => p.VoteId)
             .IsRequired(false);
         builder.HasOne(p => p.User)
             .WithMany()

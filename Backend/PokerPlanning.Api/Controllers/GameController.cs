@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using PokerPlanning.Api.Hubs;
 using PokerPlanning.Application.src.GameFeature.Commands.ChangeVotingProcess;
 using PokerPlanning.Application.src.GameFeature.Commands.Create;
+using PokerPlanning.Application.src.GameFeature.Commands.DoVote;
 using PokerPlanning.Application.src.GameFeature.Commands.JoinAsGuest;
 using PokerPlanning.Application.src.GameFeature.Queries.GetGame;
 using PokerPlanning.Application.src.GameFeature.Results;
@@ -83,10 +84,34 @@ public class GameController : ControllerBase
         await _hubContext.Clients
             .Group(gameId.ToString())
             .SendAsync(
-                "VotingProcessChanged",
+                GameHubMethods.VotingProcessChanged,
                 new VotingProcessChangedResponse(
                     request.IsActive,
                     request.TicketId
+                )
+            );
+
+        return Ok();
+    }
+
+    [HttpPut("{gameId}/vote")]
+    [Authorize]
+    public async Task<ActionResult> DoVote([FromRoute] Guid gameId, [FromBody] DoVoteRequest? request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+
+        var result = await _sender.Send(new DoVoteCommand(
+            GameId: gameId,
+            UserId: new Guid(userId),
+            VoteId: request?.VoteId
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.ParticipantVoted,
+                new ParticipantVotedResponse(
+                    ParticipantId: result.ParticipantId,
+                    VoteId: result.VoteId
                 )
             );
 
