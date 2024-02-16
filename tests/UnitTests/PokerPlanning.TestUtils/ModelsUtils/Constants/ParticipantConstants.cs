@@ -1,4 +1,4 @@
-namespace PokerPlanning.Domain.UnitTests.Models.GameAggregate.Constants;
+namespace PokerPlanning.TestUtils.ModelUtils.Constants;
 
 public static class ParticipantConstants
 {

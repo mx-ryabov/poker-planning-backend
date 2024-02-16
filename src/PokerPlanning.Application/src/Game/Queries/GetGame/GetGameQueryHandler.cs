@@ -1,4 +1,5 @@
 using MediatR;
+using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Application.src.Results;
@@ -17,7 +18,7 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
 
     public async Task<GetGameResult> Handle(GetGameQuery request, CancellationToken cancellationToken)
     {
-        var game = await _gameRepository.Get(request.GameId, cancellationToken);
+        var game = await _gameRepository.Get(request.GameId, cancellationToken) ?? throw new NotFoundException("Game"); ;
         return MapToResult(game);
     }
 

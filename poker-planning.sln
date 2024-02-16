@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Domain.UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Infrastructure.UnitTests", "tests\UnitTests\PokerPlanning.Infrastructure.UnitTests\PokerPlanning.Infrastructure.UnitTests.csproj", "{CC83E29F-0B20-4442-8732-9DB7B81735E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.TestUtils", "tests\UnitTests\PokerPlanning.TestUtils\PokerPlanning.TestUtils.csproj", "{322B107E-2384-4884-9DD2-B65DAD94EF59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{CC83E29F-0B20-4442-8732-9DB7B81735E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC83E29F-0B20-4442-8732-9DB7B81735E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC83E29F-0B20-4442-8732-9DB7B81735E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CB9658CB-02B2-4DBB-9189-AFBD81A59AFB} = {B208C17D-43F0-4D0E-A9E9-7ABB94518850}
@@ -91,5 +97,6 @@ Global
 		{D3DA09DE-DFEA-44C6-828D-DC6F6D369F6F} = {65C06019-55FD-4427-AD06-AE78C344A97F}
 		{22B40DF3-D6D5-4D29-8206-9F5F414CA7D0} = {65C06019-55FD-4427-AD06-AE78C344A97F}
 		{CC83E29F-0B20-4442-8732-9DB7B81735E1} = {65C06019-55FD-4427-AD06-AE78C344A97F}
+		{322B107E-2384-4884-9DD2-B65DAD94EF59} = {65C06019-55FD-4427-AD06-AE78C344A97F}
 	EndGlobalSection
 EndGlobal

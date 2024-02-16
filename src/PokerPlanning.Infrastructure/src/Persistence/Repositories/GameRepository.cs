@@ -25,7 +25,7 @@ public class GameRepository : IGameRepository
         await _dbContext.Games.AddAsync(game, cancellationToken);
     }
 
-    public async Task<Game> Get(Guid gameId, CancellationToken cancellationToken)
+    public async Task<Game?> Get(Guid gameId, CancellationToken cancellationToken)
     {
         return await _dbContext.Games
             .Include(g => g.VotingSystem)
@@ -35,7 +35,7 @@ public class GameRepository : IGameRepository
             .SingleAsync(g => g.Id == gameId, cancellationToken);
     }
 
-    public async Task<Participant> GetParticipant(Guid gameId, Guid userId, CancellationToken cancellationToken)
+    public async Task<Participant?> GetParticipant(Guid gameId, Guid userId, CancellationToken cancellationToken)
     {
         return await _dbContext.Participants
             .Include(p => p.Vote)

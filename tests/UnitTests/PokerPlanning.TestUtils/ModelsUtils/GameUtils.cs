@@ -1,9 +1,9 @@
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
-using PokerPlanning.Domain.UnitTests.Models.GameAggregate.Constants;
+using PokerPlanning.TestUtils.ModelUtils.Constants;
 
-namespace PokerPlanning.Domain.UnitTests.Models.GameAggregate.TestUtils;
+namespace PokerPlanning.TestUtils.ModelUtils;
 
 public static class GameUtils
 {

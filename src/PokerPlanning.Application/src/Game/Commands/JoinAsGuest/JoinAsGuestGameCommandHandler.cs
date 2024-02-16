@@ -1,4 +1,5 @@
 using MediatR;
+using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Authentication;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Errors;
@@ -41,7 +42,7 @@ public class JoinAsGuestGameCommandHandler :
             var participant = Participant.Create(guest.DisplayName, ParticipantRole.VotingMember, guest);
             await _gameRepository.CreateParticipant(participant, cancellationToken);
 
-            var game = await _gameRepository.Get(request.gameId, cancellationToken);
+            var game = await _gameRepository.Get(request.GameId, cancellationToken) ?? throw new NotFoundException("Game");
             var result = game.AddParticipant(participant);
             if (!result.Success)
             {

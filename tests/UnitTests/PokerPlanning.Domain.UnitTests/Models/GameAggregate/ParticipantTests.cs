@@ -2,7 +2,7 @@ using FluentAssertions;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate;
-using PokerPlanning.Domain.UnitTests.Models.GameAggregate.TestUtils;
+using PokerPlanning.TestUtils.ModelUtils;
 
 namespace PokerPlanning.Domain.UnitTests.Models.GameAggregate;
 

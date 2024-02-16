@@ -1,4 +1,5 @@
 using MediatR;
+using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 using PokerPlanning.Application.src.GameFeature.Results;
@@ -19,7 +20,7 @@ public class GetParticipantByGameAndUserIdHandler : IRequestHandler<GetParticipa
             gameId: request.GameId,
             userId: request.UserId,
             cancellationToken
-        );
+        ) ?? throw new NotFoundException("Participant");
         return new GameParticipantResult(
             Id: participant.Id,
             DisplayName: participant.DisplayName,

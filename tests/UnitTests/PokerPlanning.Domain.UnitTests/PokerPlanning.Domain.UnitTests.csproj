@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\PokerPlanning.Domain\PokerPlanning.Domain.csproj" />
+    <ProjectReference Include="..\PokerPlanning.TestUtils\PokerPlanning.TestUtils.csproj" />
   </ItemGroup>
 
 </Project>
