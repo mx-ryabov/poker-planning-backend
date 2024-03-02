@@ -5,39 +5,40 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B208C17D-43F0-4D0E-A9E9-7ABB94518850}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Api", "src\PokerPlanning.Api\PokerPlanning.Api.csproj", "{CB9658CB-02B2-4DBB-9189-AFBD81A59AFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Api", "src\PokerPlanning.Api\PokerPlanning.Api.csproj", "{CB9658CB-02B2-4DBB-9189-AFBD81A59AFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Application", "src\PokerPlanning.Application\PokerPlanning.Application.csproj", "{E1014866-00A1-4909-9811-38C03616112B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Application", "src\PokerPlanning.Application\PokerPlanning.Application.csproj", "{E1014866-00A1-4909-9811-38C03616112B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Contracts", "src\PokerPlanning.Contracts\PokerPlanning.Contracts.csproj", "{B83F5295-7A40-4BB4-96D4-C444D258B57D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Contracts", "src\PokerPlanning.Contracts\PokerPlanning.Contracts.csproj", "{B83F5295-7A40-4BB4-96D4-C444D258B57D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Domain", "src\PokerPlanning.Domain\PokerPlanning.Domain.csproj", "{3C6A422B-E3A6-4E24-B293-AFA376094411}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Domain", "src\PokerPlanning.Domain\PokerPlanning.Domain.csproj", "{3C6A422B-E3A6-4E24-B293-AFA376094411}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Infrastructure", "src\PokerPlanning.Infrastructure\PokerPlanning.Infrastructure.csproj", "{D0267AE5-63BA-474D-AFB0-2EE9CF5B9B34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Infrastructure", "src\PokerPlanning.Infrastructure\PokerPlanning.Infrastructure.csproj", "{D0267AE5-63BA-474D-AFB0-2EE9CF5B9B34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.SDK", "src\PokerPlanning.SDK\PokerPlanning.SDK.csproj", "{1F3A8747-3AC7-4344-BE00-64C3C06D82E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.SDK", "src\PokerPlanning.SDK\PokerPlanning.SDK.csproj", "{1F3A8747-3AC7-4344-BE00-64C3C06D82E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{59389CDD-8CF5-43F3-8F8B-E720C7C99FC5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{65C06019-55FD-4427-AD06-AE78C344A97F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Api.UnitTests", "tests\UnitTests\PokerPlanning.Api.UnitTests\PokerPlanning.Api.UnitTests.csproj", "{4E11167B-CEAF-4261-8C21-A7B692C34E28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Api.UnitTests", "tests\UnitTests\PokerPlanning.Api.UnitTests\PokerPlanning.Api.UnitTests.csproj", "{4E11167B-CEAF-4261-8C21-A7B692C34E28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Application.UnitTests", "tests\UnitTests\PokerPlanning.Application.UnitTests\PokerPlanning.Application.UnitTests.csproj", "{D3DA09DE-DFEA-44C6-828D-DC6F6D369F6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Application.UnitTests", "tests\UnitTests\PokerPlanning.Application.UnitTests\PokerPlanning.Application.UnitTests.csproj", "{D3DA09DE-DFEA-44C6-828D-DC6F6D369F6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Domain.UnitTests", "tests\UnitTests\PokerPlanning.Domain.UnitTests\PokerPlanning.Domain.UnitTests.csproj", "{22B40DF3-D6D5-4D29-8206-9F5F414CA7D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Domain.UnitTests", "tests\UnitTests\PokerPlanning.Domain.UnitTests\PokerPlanning.Domain.UnitTests.csproj", "{22B40DF3-D6D5-4D29-8206-9F5F414CA7D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Infrastructure.UnitTests", "tests\UnitTests\PokerPlanning.Infrastructure.UnitTests\PokerPlanning.Infrastructure.UnitTests.csproj", "{CC83E29F-0B20-4442-8732-9DB7B81735E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.Infrastructure.UnitTests", "tests\UnitTests\PokerPlanning.Infrastructure.UnitTests\PokerPlanning.Infrastructure.UnitTests.csproj", "{CC83E29F-0B20-4442-8732-9DB7B81735E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.TestUtils", "tests\UnitTests\PokerPlanning.TestUtils\PokerPlanning.TestUtils.csproj", "{322B107E-2384-4884-9DD2-B65DAD94EF59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerPlanning.TestUtils", "tests\UnitTests\PokerPlanning.TestUtils\PokerPlanning.TestUtils.csproj", "{322B107E-2384-4884-9DD2-B65DAD94EF59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{A4F9E55F-0763-42A0-963C-393A3E0E4598}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerPlanning.Api.IntegrationTests", "tests\IntegrationTests\PokerPlanning.Api.IntegrationTests\PokerPlanning.Api.IntegrationTests.csproj", "{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CB9658CB-02B2-4DBB-9189-AFBD81A59AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -84,6 +85,13 @@ Global
 		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{322B107E-2384-4884-9DD2-B65DAD94EF59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CB9658CB-02B2-4DBB-9189-AFBD81A59AFB} = {B208C17D-43F0-4D0E-A9E9-7ABB94518850}
@@ -98,5 +106,7 @@ Global
 		{22B40DF3-D6D5-4D29-8206-9F5F414CA7D0} = {65C06019-55FD-4427-AD06-AE78C344A97F}
 		{CC83E29F-0B20-4442-8732-9DB7B81735E1} = {65C06019-55FD-4427-AD06-AE78C344A97F}
 		{322B107E-2384-4884-9DD2-B65DAD94EF59} = {65C06019-55FD-4427-AD06-AE78C344A97F}
+		{A4F9E55F-0763-42A0-963C-393A3E0E4598} = {59389CDD-8CF5-43F3-8F8B-E720C7C99FC5}
+		{5AEE74C4-DB61-4A6C-992A-62DE2D5A44F9} = {A4F9E55F-0763-42A0-963C-393A3E0E4598}
 	EndGlobalSection
 EndGlobal

@@ -13,6 +13,7 @@ using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Contracts.src.Game;
 using PokerPlanning.Contracts.src.GameHub;
 using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
+using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -38,7 +39,7 @@ public class GameController : ControllerBase
     }
 
     [HttpPost("")]
-    public async Task<ActionResult> Create([FromBody] CreateGameRequest req)
+    public async Task<ActionResult> Create(CreateGameRequest req)
     {
         var command = new CreateGameCommand(
             Name: req.Name,
@@ -134,5 +135,17 @@ public class GameController : ControllerBase
             );
 
         return Ok();
+    }
+
+    [HttpGet("{gameId}/current-participant")]
+    [Authorize]
+    public async Task<ActionResult> GetCurrentParticipant([FromRoute] Guid gameId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+        var participantResult = await _sender.Send(new GetParticipantByGameAndUserIdQuery(
+            GameId: gameId,
+            UserId: Guid.Parse(userId)
+        ));
+        return Ok(participantResult);
     }
 }

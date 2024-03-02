@@ -25,6 +25,7 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
     private GetGameResult MapToResult(Game game)
     {
         return new GetGameResult(
+            Id: game.Id,
             Name: game.Name,
             Link: game.Link,
             Settings: new GameSettingsResult(
