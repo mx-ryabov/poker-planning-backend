@@ -1,18 +1,20 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using PokerPlanning.Domain.src.BaseModels;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
 using PokerPlanning.Domain.src.Models.UserAggregate;
+using PokerPlanning.Domain.src.Models.UserAggregate.Enums;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities;
 using PokerPlanning.Infrastructure.src.Authentication;
 
 namespace PokerPlanning.Infrastructure.src.Persistence;
 
-public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
+public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, ApplicationUserRole, Guid>
 {
     public PokerPlanningDbContext()
     { }
@@ -36,6 +38,16 @@ public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, Identit
             .ApplyConfigurationsFromAssembly(typeof(PokerPlanningDbContext).Assembly);
 
         SetSeedData(modelBuilder);
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entity.GetProperties())
+            {
+                if (property.Name == "Id" && property.ClrType == typeof(Guid))
+                {
+                    property.ValueGenerated = ValueGenerated.Never;
+                }
+            }
+        }
         base.OnModelCreating(modelBuilder);
     }
 
@@ -83,13 +95,15 @@ public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, Identit
 
     private static void SeedUserRoles(ModelBuilder modelBuilder)
     {
-        var roles = new List<IdentityRole<Guid>>
+        var roles = new List<ApplicationUserRole>
         {
-            new("Guest") { Id = new Guid("91c050e7-0576-4961-8753-75a39473bcc0") },
-            new("Member") { Id = new Guid("6cbc5b47-1527-4259-b8d0-e6c0d0513c3b") },
-            new("Admin") { Id = new Guid("eca7a853-d704-4545-a31c-67a78e88d599") }
+            new(nameof(UserRole.Guest)) { Id = ApplicationUserRole.GetRoleId(UserRole.Guest) },
+            new(nameof(UserRole.Member)) { Id = ApplicationUserRole.GetRoleId(UserRole.Member) },
+            new(nameof(UserRole.Admin)) { Id = ApplicationUserRole.GetRoleId(UserRole.Admin) }
         };
 
-        modelBuilder.Entity<IdentityRole<Guid>>().HasData(roles);
+        modelBuilder.Entity<ApplicationUserRole>().HasData(roles);
     }
+
+    
 }

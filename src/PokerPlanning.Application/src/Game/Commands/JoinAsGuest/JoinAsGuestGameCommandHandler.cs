@@ -40,7 +40,7 @@ public class JoinAsGuestGameCommandHandler :
             await _userRepository.CreateGuest(guest, cancellationToken);
 
             var participant = Participant.Create(guest.DisplayName, ParticipantRole.VotingMember, guest);
-            await _gameRepository.CreateParticipant(participant, cancellationToken);
+            //await _gameRepository.CreateParticipant(participant, cancellationToken);
 
             var game = await _gameRepository.Get(request.GameId, cancellationToken) ?? throw new NotFoundException("Game");
             var result = game.AddParticipant(participant);
@@ -50,7 +50,7 @@ public class JoinAsGuestGameCommandHandler :
             }
             await _unitOfWork.SaveAsync(cancellationToken);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync(cancellationToken);
             throw;

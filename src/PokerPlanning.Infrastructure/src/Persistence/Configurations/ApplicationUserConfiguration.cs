@@ -8,6 +8,10 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
+        builder.HasOne(au => au.Role)
+            .WithMany()
+            .HasForeignKey(au => au.RoleId)
+            .IsRequired();
         builder.HasOne(au => au.User)
             .WithOne()
             .IsRequired();

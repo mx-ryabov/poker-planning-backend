@@ -63,8 +63,8 @@ public static class DependencyInjection
     {
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>();
 
-        services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
-            .AddRoles<IdentityRole<Guid>>()
+        services.AddIdentity<ApplicationUser, ApplicationUserRole>()
+            .AddRoles<ApplicationUserRole>()
             .AddEntityFrameworkStores<PokerPlanningDbContext>()
             .AddDefaultTokenProviders();
 

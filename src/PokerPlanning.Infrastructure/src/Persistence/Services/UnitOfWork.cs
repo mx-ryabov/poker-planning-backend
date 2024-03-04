@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 

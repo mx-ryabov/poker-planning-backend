@@ -10,7 +10,7 @@ public class VotingResultVoteConfigurations : IEntityTypeConfiguration<VotingRes
     {
         builder.HasOne(vrv => vrv.Vote)
             .WithMany()
-            .IsRequired()
+            .IsRequired(false)
             .HasForeignKey(vrv => vrv.VoteId);
         builder.HasOne(vrv => vrv.Participant)
             .WithMany()

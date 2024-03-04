@@ -13,7 +13,7 @@ public class VotingResult : Entity<Guid>
     public Guid GameId { get; set; }
     public Ticket? Ticket { get; set; }
     public Guid? TicketId { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public List<VotingResultVote> Votes { get; set; } = new List<VotingResultVote>();
 
     public static VotingResult Create(Guid gameId, List<VotingResultVote> votes, Guid? ticketId)

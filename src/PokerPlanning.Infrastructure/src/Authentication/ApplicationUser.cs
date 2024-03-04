@@ -5,14 +5,16 @@ namespace PokerPlanning.Infrastructure.src.Authentication;
 
 public class ApplicationUser : IdentityUser<Guid>
 {
-    public IdentityRole<Guid> Role { get; set; } = null!;
+    public ApplicationUserRole Role { get; set; } = null!;
+    public Guid RoleId {  get; set; }
 
     public User User { get; set; } = null!;
     public Guid UserId { get; set; }
     public ApplicationUser() { }
-    public ApplicationUser(string userName, User user, IdentityRole<Guid> role) : base(userName)
+    public ApplicationUser(string userName, User user, Guid roleId) : base(userName)
     {
-        Role = role;
+        Id = Guid.NewGuid();
+        RoleId = roleId;
         User = user;
     }
 }

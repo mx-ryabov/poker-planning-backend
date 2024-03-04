@@ -18,7 +18,7 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
 
     public async Task<GetGameResult> Handle(GetGameQuery request, CancellationToken cancellationToken)
     {
-        var game = await _gameRepository.Get(request.GameId, cancellationToken) ?? throw new NotFoundException("Game"); ;
+        var game = await _gameRepository.Get(request.GameId, cancellationToken) ?? throw new NotFoundException("Game");
         return MapToResult(game);
     }
 

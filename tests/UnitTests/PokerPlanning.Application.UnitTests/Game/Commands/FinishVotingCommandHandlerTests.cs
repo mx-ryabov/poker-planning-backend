@@ -39,6 +39,7 @@ public class FinishVotingCommandHandlerTests
         )).ReturnsAsync(FinishVotingCommandUtils.CreateParticipant(ParticipantRole.Master));
         
         await _handler.Handle(command, default);
+
         _unitOfWork.Verify(uow => uow.SaveAsync(default), Times.Once);
     }
 

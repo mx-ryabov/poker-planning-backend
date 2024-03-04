@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PokerPlanning.Infrastructure.src.Persistence;
@@ -11,9 +12,11 @@ using PokerPlanning.Infrastructure.src.Persistence;
 namespace PokerPlanning.Infrastructure.Migrations
 {
     [DbContext(typeof(PokerPlanningDbContext))]
-    partial class PokerPlanningDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302215424_VotingResultVote_VoteIsNotRequired")]
+    partial class VotingResultVote_VoteIsNotRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,6 +28,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -171,6 +175,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.GameAggregate.Entities.Participant", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("DisplayName")
@@ -204,6 +209,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingResult", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -227,6 +233,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingResultVote", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ParticipantId")
@@ -252,6 +259,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.GameAggregate.Game", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Link")
@@ -275,6 +283,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.TicketAggregate.Ticket", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -312,6 +321,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.UserAggregate.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<int>("Role")
@@ -329,6 +339,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities.VotingSystemVote", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Order")
@@ -349,7 +360,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                     b.HasIndex("VotingSystemId");
 
-                    b.ToTable("VotingSystemVotes", (string)null);
+                    b.ToTable("VotingSystemVotes");
 
                     b.HasData(
                         new
@@ -485,6 +496,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.VotingSystemAggregate.VotingSystem", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("CreatorId")
@@ -516,6 +528,7 @@ namespace PokerPlanning.Infrastructure.Migrations
             modelBuilder.Entity("PokerPlanning.Infrastructure.src.Authentication.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
@@ -738,7 +751,7 @@ namespace PokerPlanning.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.Settings#PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -748,13 +761,13 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                             b1.HasKey("GameId");
 
-                            b1.ToTable("Games", (string)null);
+                            b1.ToTable("Games");
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
                         });
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -772,14 +785,14 @@ namespace PokerPlanning.Infrastructure.Migrations
                             b1.HasIndex("TicketId")
                                 .IsUnique();
 
-                            b1.ToTable("Games", (string)null);
+                            b1.ToTable("Games");
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
 
                             b1.HasOne("PokerPlanning.Domain.src.Models.TicketAggregate.Ticket", "Ticket")
                                 .WithOne()
-                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
+                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
 
                             b1.Navigation("Ticket");
                         });

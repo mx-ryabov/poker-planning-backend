@@ -48,7 +48,7 @@ public class GameTests
 
     [Theory]
     [MemberData(nameof(FinishVotingProcessData))]
-    public void Game_FinishVotingProcess_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, string? ticketIdStr, bool expectedSuccess, bool expectedIsActive, string? expectedTicketIdStr)
+    public void Game_FinishVotingProcess_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, string? ticketIdStr, bool expectedSuccess, bool expectedIsActive, string? expectedTicketIdStr, int expectedVotingResultsCount)
     {
         Guid? ticketId = ticketIdStr != null ? Guid.Parse(ticketIdStr) : null;
         Guid? expectedTicketId = expectedTicketIdStr != null ? Guid.Parse(expectedTicketIdStr) : null;
@@ -64,16 +64,17 @@ public class GameTests
         result.Success.Should().Be(expectedSuccess);
         game.VotingProcess.IsActive.Should().Be(expectedIsActive);
         game.VotingProcess.TicketId.Should().Be(expectedTicketId);
+        game.VotingResults.Should().HaveCount(expectedVotingResultsCount);
     }
 
     public static IEnumerable<object[]> FinishVotingProcessData =>
         new List<object[]>
         {
-            new object[] { ParticipantRole.Master, null, true, false, null },
-            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null },
-            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
-            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
-            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null },
+            new object[] { ParticipantRole.Master, null, true, false, null, 1 },
+            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null, 1 },
+            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0 },
+            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0 },
+            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null, 1 },
         };
 
     [Theory]

@@ -2,7 +2,6 @@ using PokerPlanning.Domain.src.BaseModels;
 using PokerPlanning.Domain.src.Common;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
-using PokerPlanning.Domain.src.Models.GameAggregate.Events;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
 
@@ -64,14 +63,7 @@ public class Game : AggregateRoot<Guid>
             );
         }
 
-        var votes = new List<VotingResultVote>();
-        foreach (Participant p in Participants)
-        {
-            votes.Add(VotingResultVote.Create(p.Id, p.VoteId));
-            p.DoVote(null);
-        }
-        var votingResult = VotingResult.Create(Id, votes, VotingProcess.TicketId);
-        AddDomainEvent(new VotingProcessFinishedEvent(votingResult));
+        CollectVotingResults();
 
         VotingProcess.IsActive = false;
         VotingProcess.TicketId = null;
@@ -99,5 +91,17 @@ public class Game : AggregateRoot<Guid>
     {
         var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
         return allowedRolesForChanging.Contains(participant.Role);
+    }
+
+    private void CollectVotingResults()
+    {
+        var votes = new List<VotingResultVote>();
+        foreach (Participant p in Participants)
+        {
+            votes.Add(VotingResultVote.Create(p.Id, p.VoteId));
+            p.DoVote(null);
+        }
+        var votingResult = VotingResult.Create(Id, votes, VotingProcess.TicketId);
+        VotingResults.Add(votingResult);
     }
 }

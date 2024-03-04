@@ -79,10 +79,11 @@ public class GameControllerTests : BaseIntegrationTest
         matchResponse.Should().NotBeNull();
         matchResponse!.Token.Should().BeOfType<string>();
         var createdGame = await _dbContext.Games
-                .Include(g => g.Participants
-                    .Where(p => p.DisplayName == randomParticipantName))
+                .Include(g => g.Participants)
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
+        createdGame.Participants.Count().Should().Be(2);
+        createdGame.Participants.Single(p => p.DisplayName == randomParticipantName).Should().NotBeNull();
     }
 
     [Fact]
@@ -160,10 +161,16 @@ public class GameControllerTests : BaseIntegrationTest
 
         response.EnsureSuccessStatusCode();
         var createdGame = await _dbContext.Games
+                .Include(g => g.VotingResults)
+                .ThenInclude(vr => vr.Votes)
+                .Include(g => g.Participants)
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
         createdGame.VotingProcess.IsActive.Should().BeFalse();
         createdGame.VotingProcess.TicketId.Should().Be(null);
+        createdGame.VotingResults.Count.Should().Be(1);
+        createdGame.VotingResults.First().Votes.Count.Should().Be(1);
+        createdGame.Participants.Find(p => p.VoteId != null).Should().BeNull();
         SetToken(null);
     }
 
