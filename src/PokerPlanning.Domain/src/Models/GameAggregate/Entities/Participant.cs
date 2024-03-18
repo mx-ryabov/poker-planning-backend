@@ -1,5 +1,5 @@
 using PokerPlanning.Domain.src.BaseModels;
-using PokerPlanning.Domain.src.Common;
+using PokerPlanning.Domain.src.Common.Results;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.UserAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate.Entities;

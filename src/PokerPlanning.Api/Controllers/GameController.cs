@@ -14,6 +14,8 @@ using PokerPlanning.Contracts.src.Game;
 using PokerPlanning.Contracts.src.GameHub;
 using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
 using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
+using PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
+using PokerPlanning.Application.src.GameFeature.Commands.DeleteTicket;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -147,5 +149,64 @@ public class GameController : ControllerBase
             UserId: Guid.Parse(userId)
         ));
         return Ok(participantResult);
+    }
+
+    [HttpPost("{gameId}/ticket")]
+    [Authorize]
+    public async Task<ActionResult> CreateTicketForGame([FromRoute] Guid gameId, [FromBody] AddTicketRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+        var ticketResult = await _sender.Send(new AddTicketCommand(
+            Title: request.Title,
+            Type: request.Type,
+            GameId: gameId,
+            UserId: Guid.Parse(userId)
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.TicketAdded,
+                ticketResult
+            );
+        return Ok(ticketResult);
+    }
+
+    [HttpPut("{gameId}/ticket/{ticketId}")]
+    [Authorize]
+    public async Task<ActionResult> UpdateTicketForGame([FromRoute] Guid gameId, [FromRoute] Guid ticketId, [FromBody] UpdateTicketRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+        var ticketResult = await _sender.Send(new UpdateTicketCommand(
+            TicketId: ticketId,
+            GameId: gameId,
+            UserId: Guid.Parse(userId),
+            Data: request.Data
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.TicketUpdated,
+                ticketResult
+            );
+        return Ok(ticketResult);
+    }
+
+    [HttpDelete("{gameId}/ticket/{ticketId}")]
+    [Authorize]
+    public async Task<ActionResult> DeleteTicketFromGame([FromRoute] Guid gameId, [FromRoute] Guid ticketId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+        var ticketResult = await _sender.Send(new DeleteTicketCommand(
+            TicketId: ticketId,
+            GameId: gameId,
+            UserId: Guid.Parse(userId)
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.TicketDeleted,
+                ticketId
+            );
+        return Ok(ticketResult);
     }
 }

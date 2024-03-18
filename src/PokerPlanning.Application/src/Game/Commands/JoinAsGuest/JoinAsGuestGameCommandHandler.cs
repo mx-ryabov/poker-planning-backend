@@ -46,11 +46,11 @@ public class JoinAsGuestGameCommandHandler :
             var result = game.AddParticipant(participant);
             if (!result.Success)
             {
-                throw new AddParticipantException(String.Join("; ", result.Errors));
+                throw new AddParticipantException(result.ErrorsString);
             }
             await _unitOfWork.SaveAsync(cancellationToken);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await _unitOfWork.RollbackAsync(cancellationToken);
             throw;

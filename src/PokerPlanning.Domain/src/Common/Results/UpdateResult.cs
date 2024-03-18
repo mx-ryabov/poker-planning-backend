@@ -1,21 +1,4 @@
-namespace PokerPlanning.Domain.src.Common;
-
-public abstract class Result
-{
-    public bool Success { get; private set; }
-    public List<string> Errors { get; private set; } = new List<string>();
-
-    protected Result(bool success)
-    {
-        Success = success;
-    }
-
-    protected Result(bool success, List<string> errors)
-    {
-        Success = success;
-        Errors = errors;
-    }
-}
+namespace PokerPlanning.Domain.src.Common.Results;
 
 public class UpdateResult : Result
 {

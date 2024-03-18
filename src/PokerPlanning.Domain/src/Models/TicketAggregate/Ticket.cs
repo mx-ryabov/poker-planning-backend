@@ -1,7 +1,7 @@
 using PokerPlanning.Domain.src.BaseModels;
+using PokerPlanning.Domain.src.Common.DTO;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.TicketAggregate.Enums;
-using PokerPlanning.Domain.src.Models.TicketAggregate.Events;
 
 namespace PokerPlanning.Domain.src.Models.TicketAggregate;
 
@@ -11,23 +11,32 @@ public class Ticket : AggregateRoot<Guid>
     {
     }
 
-    public required string Title { get; set; }
-    public string Description { get; set; } = "";
-    public string? Link { get; set; } = null;
-    public TicketType? Type { get; set; } = null;
-    public string? Identifier { get; set; } = null;
-    public string? Estimation { get; set; } = null;
-    public required Game Game { get; set; }
+    public string Title { get; private set; } = null!;
+    public string Description { get; private set; } = "";
+    public string? Link { get; private set; }
+    public TicketType? Type { get; private set; }
+    public string? Identifier { get; private set; }
+    public string? Estimation { get; private set; }
+    public Game? Game { get; private set; }
+    public Guid? GameId { get; private set; }
 
-    public static Ticket CreateNew(string title, TicketType type, Game game)
+    public static Ticket CreateNew(string title, TicketType type, Guid? gameId)
     {
-        var ticket = new Ticket(Guid.NewGuid())
+        return new(Guid.NewGuid())
         {
             Title = title,
             Type = type,
-            Game = game
+            GameId = gameId,
         };
-        ticket.AddDomainEvent(new TicketCreatedEvent(ticket));
-        return ticket;
+    }
+
+    public void Update(UpdateTicketDTO data)
+    {
+        Title = data.Title ?? Title;
+        Description = data.Description ?? Description;
+        Link = data.Link ?? Link;
+        Type = data.Type ?? Type;
+        Identifier = data.Identifier ?? Identifier;
+        Estimation = data.Estimation ?? Estimation;
     }
 }

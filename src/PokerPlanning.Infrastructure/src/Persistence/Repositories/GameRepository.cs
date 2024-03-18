@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using PokerPlanning.Application.src.Common.DTO.GameFeature;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
+using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Repositories;
 
@@ -41,5 +41,13 @@ public class GameRepository : IGameRepository
             .Include(p => p.Vote)
             .Include(p => p.Game)
             .SingleAsync(p => p.GameId == gameId && p.UserId == userId, cancellationToken);
+    }
+
+    public async Task<ParticipantRole?> GetParticipantRole(Guid gameId, Guid userId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Participants
+            .Where(p => p.GameId == gameId && p.UserId == userId)
+            .Select(p => p.Role)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

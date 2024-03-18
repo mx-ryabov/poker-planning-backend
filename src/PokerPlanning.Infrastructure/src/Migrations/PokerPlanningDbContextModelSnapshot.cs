@@ -22,49 +22,6 @@ namespace PokerPlanning.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("91c050e7-0576-4961-8753-75a39473bcc0"),
-                            Name = "Guest"
-                        },
-                        new
-                        {
-                            Id = new Guid("6cbc5b47-1527-4259-b8d0-e6c0d0513c3b"),
-                            Name = "Member"
-                        },
-                        new
-                        {
-                            Id = new Guid("eca7a853-d704-4545-a31c-67a78e88d599"),
-                            Name = "Admin"
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -286,7 +243,7 @@ namespace PokerPlanning.Infrastructure.Migrations
                     b.Property<string>("Estimation")
                         .HasColumnType("varchar(50)");
 
-                    b.Property<Guid>("GameId")
+                    b.Property<Guid?>("GameId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Identifier")
@@ -349,7 +306,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                     b.HasIndex("VotingSystemId");
 
-                    b.ToTable("VotingSystemVotes", (string)null);
+                    b.ToTable("VotingSystemVotes");
 
                     b.HasData(
                         new
@@ -588,6 +545,49 @@ namespace PokerPlanning.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("PokerPlanning.Infrastructure.src.Authentication.ApplicationUserRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("91c050e7-0576-4961-8753-75a39473bcc0"),
+                            Name = "Guest"
+                        },
+                        new
+                        {
+                            Id = new Guid("6cbc5b47-1527-4259-b8d0-e6c0d0513c3b"),
+                            Name = "Member"
+                        },
+                        new
+                        {
+                            Id = new Guid("eca7a853-d704-4545-a31c-67a78e88d599"),
+                            Name = "Admin"
+                        });
+                });
+
             modelBuilder.Entity("PokerPlanning.Domain.src.Models.UserAggregate.GuestUserAggregate.GuestUser", b =>
                 {
                     b.HasBaseType("PokerPlanning.Domain.src.Models.UserAggregate.User");
@@ -620,7 +620,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("PokerPlanning.Infrastructure.src.Authentication.ApplicationUserRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -647,7 +647,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("PokerPlanning.Infrastructure.src.Authentication.ApplicationUserRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -738,7 +738,7 @@ namespace PokerPlanning.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.Settings#PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.GameSettings", "Settings", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -748,13 +748,13 @@ namespace PokerPlanning.Infrastructure.Migrations
 
                             b1.HasKey("GameId");
 
-                            b1.ToTable("Games", (string)null);
+                            b1.ToTable("Games");
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
                         });
 
-                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
+                    b.OwnsOne("PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "VotingProcess", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
@@ -772,14 +772,14 @@ namespace PokerPlanning.Infrastructure.Migrations
                             b1.HasIndex("TicketId")
                                 .IsUnique();
 
-                            b1.ToTable("Games", (string)null);
+                            b1.ToTable("Games");
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
 
                             b1.HasOne("PokerPlanning.Domain.src.Models.TicketAggregate.Ticket", "Ticket")
                                 .WithOne()
-                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
+                                .HasForeignKey("PokerPlanning.Domain.src.Models.GameAggregate.Game.VotingProcess#PokerPlanning.Domain.src.Models.GameAggregate.Entities.VotingProcess", "TicketId");
 
                             b1.Navigation("Ticket");
                         });
@@ -797,9 +797,7 @@ namespace PokerPlanning.Infrastructure.Migrations
                 {
                     b.HasOne("PokerPlanning.Domain.src.Models.GameAggregate.Game", "Game")
                         .WithMany("Tickets")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GameId");
 
                     b.Navigation("Game");
                 });
@@ -824,7 +822,7 @@ namespace PokerPlanning.Infrastructure.Migrations
 
             modelBuilder.Entity("PokerPlanning.Infrastructure.src.Authentication.ApplicationUser", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
+                    b.HasOne("PokerPlanning.Infrastructure.src.Authentication.ApplicationUserRole", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)

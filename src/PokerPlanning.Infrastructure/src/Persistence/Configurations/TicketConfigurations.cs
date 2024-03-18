@@ -30,8 +30,8 @@ public class TicketConfigurations : IEntityTypeConfiguration<Ticket>
             .HasColumnType("varchar(50)");
         builder.HasOne(t => t.Game)
             .WithMany(g => g.Tickets)
-            .HasForeignKey("GameId")
-            .IsRequired();
+            .HasForeignKey(t => t.GameId)
+            .IsRequired(false);
         builder.ToTable("Tickets");
     }
 }

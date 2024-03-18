@@ -7,6 +7,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Models\GameAggregate\Events\" />
+    <Folder Include="src\Models\TicketAggregate\DTO\" />
+    <Folder Include="src\Models\TicketAggregate\Events\" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>

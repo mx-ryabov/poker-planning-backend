@@ -1,25 +1,28 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using PokerPlanning.Api.IntegrationTests.Utilities;
 using PokerPlanning.Application.src.GameFeature.Results;
-using PokerPlanning.Application.src.Results;
 using PokerPlanning.Contracts.src.Game;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
+using PokerPlanning.Domain.src.Models.TicketAggregate.Enums;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net.Sockets;
 
 namespace PokerPlanning.Api.IntegrationTests.Controllers;
 
 public class GameControllerTests : BaseIntegrationTest
 {
+    private readonly GameHelper _helper;
     public GameControllerTests(PokerPlanningWebApplicationFactory factory) : base(factory)
     {
+        _helper = new GameHelper(_client);
     }
 
     [Fact]
     public async Task CreateGame_WhenRequestValid_CreatesAndReturnGameAndToken()
     {
-        var requestData = await CreateGameRequest();
+        var requestData = await _helper.CreateGameRequest();
 
         var response = await _client.PostAsJsonAsync("/api/games", requestData);
 
@@ -41,7 +44,7 @@ public class GameControllerTests : BaseIntegrationTest
     [Fact]
     public async Task CreateGame_WhenRequestInvalid_ThrowsBadRequestException()
     {
-        var votingSystem = await GetVotingSystem();
+        var votingSystem = await _helper.GetVotingSystem();
         votingSystem.Should().NotBeNull();
         var invalidData = new{};
 
@@ -69,8 +72,8 @@ public class GameControllerTests : BaseIntegrationTest
     [Fact]
     public async Task JoinAsGuest_WhenRequestDataValid_CreatesParticipantAndReturnsToken()
     {
-        var game = await CreateGame();
-        var randomParticipantName = GameHelper.GetParticipantName();
+        var game = await _helper.CreateGame();
+        var randomParticipantName = _helper.GetParticipantName();
         JoinAsGuestRequest requestData = new(randomParticipantName);
         var response = await _client.PostAsJsonAsync($"/api/games/{game!.Id}/join-as-guest", requestData);
 
@@ -89,8 +92,8 @@ public class GameControllerTests : BaseIntegrationTest
     [Fact]
     public async Task GetGameById_WhenUserIsAuthorizedForGame_ReturnsGameResult()
     {
-        var game = await CreateGame();
-        SetToken(game!.MasterToken);
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
 
         var response = await _client.GetAsync($"/api/games/{game!.Id}");
 
@@ -99,13 +102,13 @@ public class GameControllerTests : BaseIntegrationTest
         matchResponse.Should().NotBeNull();
         matchResponse!.Id.Should().Be(game!.Id);
         _client.DefaultRequestHeaders.Authorization = null;
-        SetToken(null);
+        _helper.SetToken(null);
     }
 
     [Fact]
     public async Task GetGameById_WhenUserIsUnauthorizedForGame_ThrowsUnauthorizedException()
     {
-        var game = await CreateGame();
+        var game = await _helper.CreateGame();
         var response = await _client.GetAsync($"/api/games/{game!.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -114,8 +117,8 @@ public class GameControllerTests : BaseIntegrationTest
     [Fact]
     public async Task GetCurrentParticipantByGameId_WhenUserIsAuthorizedForGame_ReturnsParticipantInfo()
     {
-        var game = await CreateGame();
-        SetToken(game!.MasterToken);
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
 
         var response = await _client.GetAsync($"/api/games/{game!.Id}/current-participant");
         response.EnsureSuccessStatusCode();
@@ -126,17 +129,16 @@ public class GameControllerTests : BaseIntegrationTest
                     .Where(p => p.Id == matchResponse!.Id && p.DisplayName == matchResponse!.DisplayName))
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
-        SetToken(null);
+        _helper.SetToken(null);
     }
 
     [Fact]
     public async Task StartVoting_ValidRequest_ReturnsSuccessCodeAndStartVoting()
     {
-        var game = await CreateGame();
-        SetToken(game!.MasterToken);
-        // Add creating and adding a ticket when it's ready
-        Guid? ticketId = null;
-        var request = new StartVotingRequest(ticketId);
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var ticket = await _helper.AddTicketToGame(game.Id);
+        var request = new StartVotingRequest(ticket!.Id);
 
         var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/start-voting", request);
         
@@ -145,17 +147,17 @@ public class GameControllerTests : BaseIntegrationTest
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
         createdGame.VotingProcess.IsActive.Should().BeTrue();
-        createdGame.VotingProcess.TicketId.Should().Be(ticketId);
-        SetToken(null);
+        createdGame.VotingProcess.TicketId.Should().Be(ticket!.Id);
+        _helper.SetToken(null);
     }
 
     [Fact]
     public async Task FinishVoting_ValidRequest_ReturnsSuccessCodeAndFinishVoting()
     {
-        var game = await CreateGame();
-        SetToken(game!.MasterToken);
-        Guid? ticketId = null;
-        await StartVoting(game!.Id, ticketId);
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var ticket = await _helper.AddTicketToGame(game.Id);
+        await _helper.StartVoting(game!.Id, ticket!.Id);
         
         var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/finish-voting", new object());
 
@@ -171,25 +173,25 @@ public class GameControllerTests : BaseIntegrationTest
         createdGame.VotingResults.Count.Should().Be(1);
         createdGame.VotingResults.First().Votes.Count.Should().Be(1);
         createdGame.Participants.Find(p => p.VoteId != null).Should().BeNull();
-        SetToken(null);
+        _helper.SetToken(null);
     }
 
     [Fact]
     public async Task Vote_ValidRequest_ReturnsSuccessCodeAndChangeVoteForCurrentParticipant()
     {
         // Arrange
-        var game = await CreateGame();
-        SetToken(game!.MasterToken);
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
 
-        Guid? ticketId = null;
-        await StartVoting(game!.Id, ticketId);
+        var ticket = await _helper.AddTicketToGame(game.Id);
+        await _helper.StartVoting(game!.Id, ticket!.Id);
 
-        SetToken(null);
-        var joinAsGuestResult = await JoinAsParticipant(game!.Id);
+        _helper.SetToken(null);
+        var joinAsGuestResult = await _helper.JoinAsParticipant(game!.Id);
 
-        SetToken(joinAsGuestResult!.Token);
-        var participantResult = await GetCurrentParticipant(game!.Id);
-        var votingSystem = await GetVotingSystem();
+        _helper.SetToken(joinAsGuestResult!.Token);
+        var participantResult = await _helper.GetCurrentParticipant(game!.Id);
+        var votingSystem = await _helper.GetVotingSystem();
         var vote = votingSystem?.Votes.First();
         DoVoteRequest request = new(vote!.Id) { };
 
@@ -203,73 +205,88 @@ public class GameControllerTests : BaseIntegrationTest
             .SingleOrDefaultAsync();
         createdParticipant.Should().NotBeNull();
         createdParticipant!.VoteId.Should().Be(vote!.Id);
-        SetToken(null);
+        _helper.SetToken(null);
     }
 
-    private void SetToken(string? token)
+    [Fact]
+    public async Task AddTicket_ValidRequest_ReturnsTicketResult()
     {
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        // Arrange
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var ticketName = _helper.GetTicketName();
+        var ticketType = TicketType.Task;
+        AddTicketRequest request = new(ticketName, ticketType) { };
+
+        // Act
+        var response = await _client.PostAsJsonAsync($"/api/games/{game!.Id}/ticket", request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var matchResponse = await response.Content.ReadFromJsonAsync<TicketResult>();
+        matchResponse.Should().NotBeNull();
+        matchResponse!.Title.Should().Be(ticketName);
+        matchResponse!.Type.Should().Be(ticketType);
+        var createdGame = await _dbContext.Games
+            .Include(g => g.Tickets)
+            .SingleOrDefaultAsync(g => g.Id == game.Id);
+        createdGame!.Tickets.Count.Should().Be(1);
+        createdGame!.Tickets[0].Id.Should().Be(matchResponse.Id);
+        createdGame!.Tickets[0].Title.Should().Be(ticketName);
+        createdGame!.Tickets[0].Type.Should().Be(ticketType);
+        _helper.SetToken(null);
     }
 
-    private async Task StartVoting(Guid gameId, Guid? ticketId)
+    [Fact]
+    public async Task UpdateTicket_ValidRequest_ReturnsTicketResult()
     {
-        var startVotingReq = new StartVotingRequest(ticketId);
-        await _client.PutAsJsonAsync($"/api/games/{gameId}/start-voting", startVotingReq);
+        // Arrange
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var addedTicket = await _helper.AddTicketToGame(game.Id);
+        UpdateTicketRequest request = _helper.CreateUpdateRequest();
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/ticket/{addedTicket!.Id}", request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var matchResponse = await response.Content.ReadFromJsonAsync<TicketResult>();
+        matchResponse.Should().NotBeNull();
+        matchResponse!.Title.Should().Be(request.Data.Title);
+        matchResponse!.Description.Should().Be(request.Data.Description);
+        matchResponse!.Estimation.Should().Be(request.Data.Estimation);
+        matchResponse!.Type.Should().Be(request.Data.Type);
+        var createdGame = await _dbContext.Games
+            .Include(g => g.Tickets)
+            .SingleOrDefaultAsync(g => g.Id == game.Id);
+        createdGame!.Tickets[0].Id.Should().Be(matchResponse.Id);
+        createdGame!.Tickets[0].Title.Should().Be(request.Data.Title);
+        createdGame!.Tickets[0].Type.Should().Be(request.Data.Type);
+        createdGame!.Tickets[0].Description.Should().Be(request.Data.Description);
+        createdGame!.Tickets[0].Estimation.Should().Be(request.Data.Estimation);
+        _helper.SetToken(null);
     }
 
-    private async Task<GameParticipantResult?> GetCurrentParticipant(Guid gameId)
+    [Fact]
+    public async Task DeleteTicket_ValidRequest_ReturnsTrue()
     {
-        var currentParticipantResponse = await _client.GetAsync($"/api/games/{gameId}/current-participant");
-        return await currentParticipantResponse.Content.ReadFromJsonAsync<GameParticipantResult>();
-    }
+        // Arrange
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var addedTicket = await _helper.AddTicketToGame(game.Id);
 
-    private async Task<JoinAsGuestGameResult?> JoinAsParticipant(Guid gameId)
-    {
-        var randomParticipantName = GameHelper.GetParticipantName();
-        JoinAsGuestRequest joinAsGuestReq = new(randomParticipantName);
-        var joinParticipantResponse = await _client.PostAsJsonAsync($"/api/games/{gameId}/join-as-guest", joinAsGuestReq);
-        return await joinParticipantResponse.Content.ReadFromJsonAsync<JoinAsGuestGameResult>();
-    }
+        // Act
+        var response = await _client.DeleteAsync($"/api/games/{game!.Id}/ticket/{addedTicket!.Id}");
 
-    private async Task<CreateGameResponse?> CreateGame()
-    {
-        var requestData = await CreateGameRequest();
-        var response = await _client.PostAsJsonAsync("/api/games", requestData);
-        return await response.Content.ReadFromJsonAsync<CreateGameResponse>();
-    }
-
-    private async Task<CreateGameRequest> CreateGameRequest()
-    {
-        var votingSystem = await GetVotingSystem();
-        votingSystem.Should().NotBeNull();
-        return new CreateGameRequest(
-                Name: GameHelper.GetName(),
-                VotingSystemId: votingSystem!.Id,
-                CreatorName: GameHelper.GetCreatorName(),
-                IsAutoRevealCards: false
-            );
-    }
-
-    private async Task<VotingSystemResult?> GetVotingSystem()
-    {
-        var response = await _client.GetAsync("/api/voting-systems");
-        var matchResponse = await response.Content.ReadFromJsonAsync<List<VotingSystemResult>>();
-        
-        return matchResponse?.ToList()[0];
-    }
-}
-
-public static class GameHelper
-{
-    public static string GetName() => $"Game's Name {RandomString(5)}";
-    public static string GetCreatorName() => $"Creator Name {RandomString(5)}";
-    public static string GetParticipantName() => $"Participant Name {RandomString(5)}";
-
-    private static Random random = new Random();
-    private static string RandomString(int length)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var matchResponse = await response.Content.ReadFromJsonAsync<bool>();
+        matchResponse.Should().BeTrue();
+        var createdGame = await _dbContext.Games
+            .Include(g => g.Tickets)
+            .SingleOrDefaultAsync(g => g.Id == game.Id);
+        createdGame!.Tickets.Count.Should().Be(0);
+        _helper.SetToken(null);
     }
 }

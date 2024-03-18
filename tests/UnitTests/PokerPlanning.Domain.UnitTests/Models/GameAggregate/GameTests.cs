@@ -1,4 +1,5 @@
 using FluentAssertions;
+using PokerPlanning.Domain.src.Common;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.TestUtils.ModelUtils;
@@ -100,5 +101,149 @@ public class GameTests
             new object[] { ParticipantRole.VotingMember, 9, false, 10 },
             new object[] { ParticipantRole.Spectator, 0, true, 2 },
             new object[] { ParticipantRole.Manager, 0, true, 2 },
+        };
+
+    // Add Ticket
+    [Theory]
+    [MemberData(nameof(AddTicketValidData))]
+    public void GameAddTicket_WhenParticipantHasEnoughtRights_ShouldAddTicket(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+
+        var result = game.AddTicket(ticket, addingParticipantRole);
+
+        result.Success.Should().Be(true);
+        game.Tickets.Count.Should().Be(1);
+        game.Tickets[0].Should().Be(ticket);
+    }
+
+    public static IEnumerable<object[]> AddTicketValidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.Master },
+            new object[] { ParticipantRole.Manager},
+        };
+
+    [Theory]
+    [MemberData(nameof(AddTicketInvalidData))]
+    public void GameAddTicket_WhenParticipantHasNotEnoughtRights_ReturnsError(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+
+        var result = game.AddTicket(ticket, addingParticipantRole);
+
+        result.Success.Should().Be(false);
+        result.Errors.Count.Should().Be(1);
+        game.Tickets.Count.Should().Be(0);
+    }
+
+    public static IEnumerable<object[]> AddTicketInvalidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.VotingMember },
+            new object[] { ParticipantRole.Spectator},
+        };
+
+
+    // Update Ticket
+    [Theory]
+    [MemberData(nameof(UpdateTicketValidData))]
+    public void GameUpdateTicket_WhenParticipantHasEnoughtRights_ShouldAddTicket(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+        game.AddTicket(ticket, addingParticipantRole);
+        var updateData = TicketUtils.GetUpdateTicketDTO();
+
+        var result = game.UpdateTicket(ticket.Id, updateData, addingParticipantRole);
+
+        result.Success.Should().Be(true);
+        game.Tickets.Count.Should().Be(1);
+        game.Tickets[0].Should().Be(result.Data);
+    }
+
+    public static IEnumerable<object[]> UpdateTicketValidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.Master },
+            new object[] { ParticipantRole.Manager},
+        };
+
+    [Theory]
+    [MemberData(nameof(UpdateTicketInvalidData))]
+    public void GameUpdateTicket_WhenModelInvalid_ReturnsError(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+        game.AddTicket(ticket, ParticipantRole.Master);
+        var updateData = TicketUtils.GetUpdateTicketDTO();
+
+        var result = game.UpdateTicket(ticket.Id, updateData, addingParticipantRole);
+
+        result.Success.Should().Be(false);
+        result.Errors.Count.Should().Be(1);
+        game.Tickets.Count.Should().Be(1);
+        game.Tickets[0].Should().Be(ticket);
+    }
+
+    public static IEnumerable<object[]> UpdateTicketInvalidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.VotingMember },
+            new object[] { ParticipantRole.Spectator},
+        };
+
+
+    // Delete Ticket
+    [Theory]
+    [MemberData(nameof(DeleteTicketValidData))]
+    public void GameDeleteTicket_WhenParticipantHasEnoughtRights_ShouldDeleteTicket(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+        game.AddTicket(ticket, addingParticipantRole);
+
+        var result = game.DeleteTicket(ticket.Id, addingParticipantRole);
+
+        result.Success.Should().Be(true);
+        game.Tickets.Count.Should().Be(0);
+    }
+
+    public static IEnumerable<object[]> DeleteTicketValidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.Master },
+            new object[] { ParticipantRole.Manager},
+        };
+
+    [Theory]
+    [MemberData(nameof(DeleteTicketInvalidData))]
+    public void GameDeleteTicket_WhenModelInvalid_ReturnsError(ParticipantRole addingParticipantRole)
+    {
+        var addingParticipant = ParticipantUtils.CreateParticipant(addingParticipantRole);
+        var game = GameUtils.CreateGame(addingParticipant);
+        var ticket = TicketUtils.CreateTicket();
+        game.AddTicket(ticket, ParticipantRole.Master);
+
+        var result = game.DeleteTicket(ticket.Id, addingParticipantRole);
+
+        result.Success.Should().Be(false);
+        result.Errors.Count.Should().Be(1);
+        game.Tickets.Count.Should().Be(1);
+        game.Tickets[0].Should().Be(ticket);
+    }
+
+    public static IEnumerable<object[]> DeleteTicketInvalidData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.VotingMember },
+            new object[] { ParticipantRole.Spectator},
         };
 }
