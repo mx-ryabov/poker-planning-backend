@@ -27,11 +27,12 @@ var app = builder.Build();
         app.UseSwaggerUI();*/
     }
 
+    app.UseCors(options => options.WithOrigins(new[] { "http://localhost:3000", "https://localhost:3000" }).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseExceptionHandler("/error");
     app.UseHttpsRedirection();
-    app.MapHub<GameHub>("/game-hub");
+    app.MapHub<GameHub>("/hubs/game");
     app.MapControllers();
     app.Run();
 }

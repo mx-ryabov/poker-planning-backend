@@ -16,6 +16,7 @@ using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
 using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 using PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
 using PokerPlanning.Application.src.GameFeature.Commands.DeleteTicket;
+using Microsoft.AspNetCore.Authentication;
 
 namespace PokerPlanning.Api.Controllers;
 
