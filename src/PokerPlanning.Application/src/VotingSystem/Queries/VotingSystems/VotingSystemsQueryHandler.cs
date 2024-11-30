@@ -20,7 +20,7 @@ public class VotinSystemsQueryHandler :
             Id: vs.Id,
             Name: vs.Name,
             Creator: null,
-            Votes: vs.Votes.Select(vsVote => new VotingSystemVoteResult(
+            Votes: vs.Votes.OrderBy(vsVote => vsVote.Order).Select(vsVote => new VotingSystemVoteResult(
                 Id: vsVote.Id,
                 Value: vsVote.Value,
                 Order: vsVote.Order,
