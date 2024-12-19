@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -105,5 +104,5 @@ public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, Applica
         modelBuilder.Entity<ApplicationUserRole>().HasData(roles);
     }
 
-    
+
 }

@@ -50,6 +50,7 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
             Participants: game.Participants.Select(p => new GameParticipantResult(
                 Id: p.Id,
                 DisplayName: p.DisplayName,
+                Online: p.Online,
                 Role: p.Role,
                 UserId: p.UserId
             )),

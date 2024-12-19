@@ -57,4 +57,30 @@ public class ParticipantTests
             new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, false, null },
             new object[] { null, false, false, null },
         };
+
+    [Fact]
+    public void Participant_Create_CreatesParticipantOfflineByDefault()
+    {
+        var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
+        participant.Online.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Participant_GoOnline_MakesUserToBeOnline()
+    {
+        var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
+
+        participant.GoOnline();
+        participant.Online.Should().BeTrue();
+    }
+    [Fact]
+    public void Participant_GoOnffline_MakesOnlineUserToBeOffline()
+    {
+        var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
+
+        participant.GoOnline();
+        participant.Online.Should().BeTrue();
+        participant.GoOffline();
+        participant.Online.Should().BeFalse();
+    }
 }

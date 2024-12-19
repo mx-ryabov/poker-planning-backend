@@ -24,6 +24,7 @@ public class GetParticipantByGameAndUserIdHandler : IRequestHandler<GetParticipa
         return new GameParticipantResult(
             Id: participant.Id,
             DisplayName: participant.DisplayName,
+            Online: participant.Online,
             Role: participant.Role,
             UserId: participant.UserId
         );

@@ -13,6 +13,7 @@ public class Participant : Entity<Guid>
     }
 
     public required string DisplayName { get; set; }
+    public required bool Online { get; set; }
     public VotingSystemVote? Vote { get; set; }
     public Guid? VoteId { get; set; }
     public User? User { get; set; } = null;
@@ -27,7 +28,8 @@ public class Participant : Entity<Guid>
         {
             DisplayName = displayName,
             Role = role,
-            User = user
+            User = user,
+            Online = false
         };
     }
 
@@ -40,6 +42,18 @@ public class Participant : Entity<Guid>
             );
         }
         VoteId = voteId;
+        return UpdateResult.Ok();
+    }
+
+    public UpdateResult GoOnline()
+    {
+        Online = true;
+        return UpdateResult.Ok();
+    }
+
+    public UpdateResult GoOffline()
+    {
+        Online = false;
         return UpdateResult.Ok();
     }
 }

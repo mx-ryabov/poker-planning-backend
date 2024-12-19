@@ -25,6 +25,9 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
             .HasConversion<string>()
             .HasColumnType("varchar(100)")
             .IsRequired();
+        builder.Property(p => p.Online)
+            .HasConversion<bool>()
+            .IsRequired();
         builder.ToTable("Participants");
     }
 }

@@ -1,11 +1,8 @@
-using FluentAssertions;
 using Moq;
 using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Application.src.GameFeature.Commands.DoVote;
 using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
 using PokerPlanning.Application.src.GameFeature.Errors;
-using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.TestUtils.ModelUtils;
@@ -37,7 +34,7 @@ public class FinishVotingCommandHandlerTests
             It.Is<Guid>(uid => uid == command.UserId),
             default
         )).ReturnsAsync(FinishVotingCommandUtils.CreateParticipant(ParticipantRole.Master));
-        
+
         await _handler.Handle(command, default);
 
         _unitOfWork.Verify(uow => uow.SaveAsync(default), Times.Once);

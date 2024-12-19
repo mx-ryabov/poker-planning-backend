@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using PokerPlanning.Application.src.GameFeature.Commands.GoOffline;
+using PokerPlanning.Application.src.GameFeature.Commands.GoOnline;
 using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 using PokerPlanning.Contracts.src.GameHub;
 
@@ -27,6 +29,7 @@ public class GameHub : Hub
             return;
         }
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
+        await _sender.Send(new GoOnlineCommand(GameId: new Guid(gameId), UserId: new Guid(userId)));
         var participantResult = await _sender.Send(new GetParticipantByGameAndUserIdQuery(
             GameId: new Guid(gameId),
             UserId: new Guid(userId)
@@ -42,6 +45,7 @@ public class GameHub : Hub
         var userId = Context.UserIdentifier;
         if (gameId != null && userId != null)
         {
+            await _sender.Send(new GoOfflineCommand(GameId: new Guid(gameId), UserId: new Guid(userId)));
             await Clients.Group(gameId).SendAsync(GameHubMethods.ParticipantLeft, new ParticipantLeftResponse(UserId: userId));
         }
         await base.OnDisconnectedAsync(exception);

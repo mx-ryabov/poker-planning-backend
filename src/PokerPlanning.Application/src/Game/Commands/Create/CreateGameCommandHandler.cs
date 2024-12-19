@@ -69,6 +69,7 @@ public class CreateGameCommandHandler :
                 p => new GameParticipantResult(
                     p.Id,
                     p.DisplayName,
+                    p.Online,
                     p.Role,
                     p.User?.Id
                 )
