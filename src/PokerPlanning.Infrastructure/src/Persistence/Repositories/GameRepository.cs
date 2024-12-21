@@ -32,7 +32,7 @@ public class GameRepository : IGameRepository
             .ThenInclude(vs => vs.Votes)
             .Include(g => g.Participants)
             .Include(g => g.Tickets)
-            .SingleAsync(g => g.Id == gameId, cancellationToken);
+            .SingleOrDefaultAsync(g => g.Id == gameId, cancellationToken);
     }
 
     public async Task<Participant?> GetParticipant(Guid gameId, Guid userId, CancellationToken cancellationToken)
@@ -40,7 +40,7 @@ public class GameRepository : IGameRepository
         return await _dbContext.Participants
             .Include(p => p.Vote)
             .Include(p => p.Game)
-            .SingleAsync(p => p.GameId == gameId && p.UserId == userId, cancellationToken);
+            .SingleOrDefaultAsync(p => p.GameId == gameId && p.UserId == userId, cancellationToken);
     }
 
     public async Task<ParticipantRole?> GetParticipantRole(Guid gameId, Guid userId, CancellationToken cancellationToken)
