@@ -4,10 +4,10 @@ namespace PokerPlanning.Domain.src.Common.DTO;
 
 // ???
 public record UpdateTicketDTO(
-    string? Title,
-    string? Description,
-    string? Link,
-    TicketType? Type,
-    string? Identifier,
-    string? Estimation
+    string? Title = null,
+    string? Description = null,
+    string? Link = null,
+    TicketType? Type = null,
+    string? Identifier = null,
+    string? Estimation = null
 );

@@ -23,7 +23,7 @@ public class TicketConfigurations : IEntityTypeConfiguration<Ticket>
             .HasConversion<string>()
             .HasColumnType("varchar(100)");
         builder.Property(t => t.Identifier)
-            .IsRequired(false)
+            .IsRequired()
             .HasColumnType("varchar(50)");
         builder.Property(t => t.Estimation)
             .IsRequired(false)

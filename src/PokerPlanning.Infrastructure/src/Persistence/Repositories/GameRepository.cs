@@ -31,7 +31,7 @@ public class GameRepository : IGameRepository
             .Include(g => g.VotingSystem)
             .ThenInclude(vs => vs.Votes)
             .Include(g => g.Participants)
-            .Include(g => g.Tickets)
+            .Include(g => g.Tickets.OrderBy(t => t.Identifier))
             .SingleOrDefaultAsync(g => g.Id == gameId, cancellationToken);
     }
 

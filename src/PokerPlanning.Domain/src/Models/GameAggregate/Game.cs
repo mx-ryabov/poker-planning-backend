@@ -5,7 +5,6 @@ using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
 using PokerPlanning.Domain.src.Models.VotingSystemAggregate;
-using System.Net.Sockets;
 
 namespace PokerPlanning.Domain.src.Models.GameAggregate;
 
@@ -24,6 +23,8 @@ public class Game : AggregateRoot<Guid>
     public List<Participant> Participants { get; private set; } = new List<Participant>();
     public List<Ticket> Tickets { get; private set; } = new List<Ticket>();
     public List<VotingResult> VotingResults { get; private set; } = new List<VotingResult>();
+
+    public int TicketsSequenceNumber { get; private set; } = 1;
 
     public static Game Create(string name, string link, GameSettings settings, Guid votingSystemId, Participant master)
     {
@@ -93,8 +94,13 @@ public class Game : AggregateRoot<Guid>
         if (IsParticipantCanAffectTickets(addingParticipantRole))
         {
             return UpdateResult.Error(
-                new () { "This user doesn't have enought rights to add tickets to this game." }    
+                new() { "This user doesn't have enought rights to add tickets to this game." }
             );
+        }
+        if (ticket.Identifier == null)
+        {
+            ticket.Update(new(Identifier: GenerateTicketIdentifier()));
+            TicketsSequenceNumber++;
         }
         Tickets.Add(ticket);
         return UpdateResult.Ok();
@@ -136,17 +142,6 @@ public class Game : AggregateRoot<Guid>
         return UpdateResult.Error(new() { "There no tickets in this game with such ID." });
     }
 
-    private bool IsParticipantCanAffectTickets(ParticipantRole addingParticipantRole)
-    {
-        return addingParticipantRole != ParticipantRole.Master && addingParticipantRole != ParticipantRole.Manager;
-    }
-
-    private bool IsParticipantCanChangeVotingProcess(Participant participant)
-    {
-        var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
-        return allowedRolesForChanging.Contains(participant.Role);
-    }
-
     private void CollectVotingResults()
     {
         var votes = new List<VotingResultVote>();
@@ -157,5 +152,28 @@ public class Game : AggregateRoot<Guid>
         }
         var votingResult = VotingResult.Create(Id, votes, VotingProcess.TicketId);
         VotingResults.Add(votingResult);
+    }
+
+    private string GenerateTicketIdentifier()
+    {
+        var prefix = new string(
+            Name.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(word => word[0])
+                .Take(3)
+                .ToArray()
+            ).ToUpper();
+
+        return new string(prefix + "-" + TicketsSequenceNumber);
+    }
+
+    private static bool IsParticipantCanAffectTickets(ParticipantRole addingParticipantRole)
+    {
+        return addingParticipantRole != ParticipantRole.Master && addingParticipantRole != ParticipantRole.Manager;
+    }
+
+    private static bool IsParticipantCanChangeVotingProcess(Participant participant)
+    {
+        var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
+        return allowedRolesForChanging.Contains(participant.Role);
     }
 }

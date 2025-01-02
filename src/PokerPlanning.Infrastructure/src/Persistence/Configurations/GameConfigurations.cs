@@ -8,8 +8,16 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
 {
     public void Configure(EntityTypeBuilder<Game> builder)
     {
-        builder.Property(g => g.Name).IsRequired().HasColumnType("varchar(255)");
-        builder.Property(g => g.Link).IsRequired().HasColumnType("varchar(255)");
+        builder.Property(g => g.Name)
+            .IsRequired()
+            .HasColumnType("varchar(255)");
+        builder.Property(g => g.Link)
+            .IsRequired()
+            .HasColumnType("varchar(255)");
+        builder.Property(g => g.TicketsSequenceNumber)
+            .IsRequired()
+            .HasDefaultValue(1)
+            .HasColumnType("integer");
         builder.OwnsOne(g => g.Settings);
         builder.OwnsOne(
             g => g.VotingProcess,
