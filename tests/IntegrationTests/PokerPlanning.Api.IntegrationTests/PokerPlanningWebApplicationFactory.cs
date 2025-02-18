@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PokerPlanning.Infrastructure.src.Persistence;
-using System;
 using Testcontainers.PostgreSql;
 
 namespace PokerPlanning.Api.IntegrationTests;
 
-public class PokerPlanningWebApplicationFactory: WebApplicationFactory<Program>, IAsyncLifetime
+public class PokerPlanningWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgres:16")

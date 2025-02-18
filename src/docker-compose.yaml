@@ -1,0 +1,31 @@
+services:
+  backend:
+    container_name: poker-planning-backend
+    build:
+      context: .
+      target: final
+    ports:
+      - 5011:5011
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    container_name: poker-planning-main-db
+    image: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    expose:
+      - 5432
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
