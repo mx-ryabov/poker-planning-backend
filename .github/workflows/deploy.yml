@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh deploy@${{ secrets.DO_HOST }} << 'EOF'
+          ssh deploy-user@${{ secrets.DO_HOST }} << 'EOF'
             cd ~/app
             git pull origin master
             docker-compose down
