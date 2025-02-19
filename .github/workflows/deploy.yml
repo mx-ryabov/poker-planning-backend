@@ -26,7 +26,7 @@ jobs:
           ssh deploy-user@${{ secrets.DO_HOST }} << 'EOF'
             cd ~/app/poker-planning-backend
             git pull origin master
-            cd /src
+            cd src/
             docker-compose down
             docker-compose pull
             docker-compose up -d --build
