@@ -23,9 +23,10 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh deploy@${{ secrets.DO_HOST }} << 'EOF'
-            cd ~/app
+          ssh deploy-user@${{ secrets.DO_HOST }} << 'EOF'
+            cd ~/app/poker-planning-backend
             git pull origin master
+            cd src/
             docker-compose down
             docker-compose pull
             docker-compose up -d --build
