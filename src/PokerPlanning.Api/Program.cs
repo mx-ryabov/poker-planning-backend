@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using PokerPlanning.Api;
 using PokerPlanning.Api.Hubs;
 using PokerPlanning.Application;
