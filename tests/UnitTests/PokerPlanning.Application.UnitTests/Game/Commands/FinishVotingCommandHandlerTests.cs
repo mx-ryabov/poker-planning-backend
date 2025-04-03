@@ -3,6 +3,7 @@ using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
 using PokerPlanning.Application.src.GameFeature.Errors;
+using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.TestUtils.ModelUtils;
@@ -34,6 +35,10 @@ public class FinishVotingCommandHandlerTests
             It.Is<Guid>(uid => uid == command.UserId),
             default
         )).ReturnsAsync(FinishVotingCommandUtils.CreateParticipant(ParticipantRole.Master));
+        _gameRepository.Setup(g => g.Get(
+            It.Is<Guid>(gid => gid == command.GameId),
+            default
+        )).ReturnsAsync(FinishVotingCommandUtils.CreateGame());
 
         await _handler.Handle(command, default);
 
@@ -63,6 +68,10 @@ public class FinishVotingCommandHandlerTests
             It.Is<Guid>(uid => uid == command.UserId),
             default
         )).ReturnsAsync(FinishVotingCommandUtils.CreateParticipant(ParticipantRole.VotingMember));
+        _gameRepository.Setup(g => g.Get(
+            It.Is<Guid>(gid => gid == command.GameId),
+            default
+        )).ReturnsAsync(FinishVotingCommandUtils.CreateGame());
 
         await Assert.ThrowsAsync<ChangingVotingProcessException>(() => _handler.Handle(command, default));
         _unitOfWork.Verify(uow => uow.SaveAsync(default), Times.Never);
@@ -83,9 +92,15 @@ public class FinishVotingCommandUtils
     {
         var participant = ParticipantUtils.CreateParticipant(role);
         var game = GameUtils.CreateGame(participant);
-        game.VotingProcess.IsActive = true;
+        game.VotingProcess.Status = VotingStatus.InProgress;
         participant.Game = game;
 
         return participant;
+    }
+
+    public static Game CreateGame()
+    {
+        var master = ParticipantUtils.CreateParticipant(ParticipantRole.Master);
+        return GameUtils.CreateGame(master, 1);
     }
 }

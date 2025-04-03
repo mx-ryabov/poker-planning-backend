@@ -32,6 +32,9 @@ public class GameRepository : IGameRepository
             .ThenInclude(vs => vs.Votes)
             .Include(g => g.Participants)
             .Include(g => g.Tickets.OrderBy(t => t.Identifier))
+            .Include(g => g.VotingResults)
+            .ThenInclude(vr => vr.Votes)
+            .ThenInclude(vrv => vrv.Vote)
             .SingleOrDefaultAsync(g => g.Id == gameId, cancellationToken);
     }
 

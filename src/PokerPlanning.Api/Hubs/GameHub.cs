@@ -58,6 +58,7 @@ public static class GameHubMethods
     public static readonly string ParticipantLeft = "ParticipantLeft";
     public static readonly string VotingStarted = "VotingStarted";
     public static readonly string VotingFinished = "VotingFinished";
+    public static readonly string CardsRevealed = "CardsRevealed";
     public static readonly string ParticipantVoted = "ParticipantVoted";
     public static readonly string TicketAdded = "TicketAdded";
     public static readonly string TicketUpdated = "TicketUpdated";

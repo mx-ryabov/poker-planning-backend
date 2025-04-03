@@ -35,7 +35,7 @@ public class Participant : Entity<Guid>
 
     public UpdateResult DoVote(Guid? voteId)
     {
-        if (!Game.VotingProcess.IsActive)
+        if (Game.VotingProcess.Status != VotingStatus.InProgress)
         {
             return UpdateResult.Error(
                 new() { "The voting process is inactive." }

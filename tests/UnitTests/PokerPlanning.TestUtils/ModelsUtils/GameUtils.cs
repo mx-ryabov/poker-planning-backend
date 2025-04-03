@@ -18,7 +18,9 @@ public static class GameUtils
         );
         for (int i = 0; i < initialParticipantsCount; i++)
         {
-            game.AddParticipant(ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember));
+            var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
+            participant.Game = game;
+            game.AddParticipant(participant);
         }
         return game;
     }

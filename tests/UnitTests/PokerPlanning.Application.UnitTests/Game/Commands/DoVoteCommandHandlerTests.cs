@@ -28,15 +28,15 @@ public class DoVoteCommandHandlerTests
     }
 
     [Fact]
-    public async Task DoVoteCommandHandler_WhenParticipantFound_AndGameIsActive_ShouldReturnDoVoteResult()
+    public async Task DoVoteCommandHandler_WhenParticipantFound_AndGameInProgress_ShouldReturnDoVoteResult()
     {
         var command = DoVoteCommandUtils.CreateCommand(true);
         _gameRepository.Setup(g => g.GetParticipant(
             It.Is<Guid>(gid => gid == command.GameId),
             It.Is<Guid>(uid => uid == command.UserId),
             default
-        )).ReturnsAsync(DoVoteCommandUtils.CreateParticipant(true));
-        
+        )).ReturnsAsync(DoVoteCommandUtils.CreateParticipant(VotingStatus.InProgress));
+
         var result = await _handler.Handle(command, default);
 
         result.Should().BeOfType<DoVoteResult>();
@@ -58,14 +58,14 @@ public class DoVoteCommandHandlerTests
     }
 
     [Fact]
-    public async Task DoVoteCommandHandler_WhenParticipantFound_AndGameIsNotActive_ShouldThrowDoVoteException()
+    public async Task DoVoteCommandHandler_WhenParticipantFound_AndGameIsInactive_ShouldThrowDoVoteException()
     {
         var command = DoVoteCommandUtils.CreateCommand(true);
         _gameRepository.Setup(g => g.GetParticipant(
             It.Is<Guid>(gid => gid == command.GameId),
             It.Is<Guid>(uid => uid == command.UserId),
             default
-        )).ReturnsAsync(DoVoteCommandUtils.CreateParticipant(false));
+        )).ReturnsAsync(DoVoteCommandUtils.CreateParticipant(VotingStatus.Inactive));
 
         await Assert.ThrowsAsync<DoVoteException>(() => _handler.Handle(command, default));
     }
@@ -82,11 +82,11 @@ public class DoVoteCommandUtils
         );
     }
 
-    public static Participant CreateParticipant(bool IsActiveVotingProcess)
+    public static Participant CreateParticipant(VotingStatus gameVotingStatus)
     {
         var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
         var game = GameUtils.CreateGame(participant);
-        game.VotingProcess.IsActive = IsActiveVotingProcess;
+        game.VotingProcess.Status = gameVotingStatus;
         participant.Game = game;
 
         return participant;

@@ -1,6 +1,8 @@
+using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
+
 namespace PokerPlanning.Application.src.GameFeature.Results;
 
 public record GameVotingProcessResult(
-    bool IsActive,
+    VotingStatus Status,
     Guid? TicketId
 );

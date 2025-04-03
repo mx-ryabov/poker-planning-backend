@@ -71,7 +71,8 @@ public class CreateGameCommandHandler :
                     p.DisplayName,
                     p.Online,
                     p.Role,
-                    p.User?.Id
+                    p.User?.Id,
+                    null
                 )
             ).ToList(),
             MasterToken: token

@@ -2,51 +2,48 @@ using FluentAssertions;
 using Moq;
 using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Application.src.GameFeature.Commands.DoVote;
-using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
-using PokerPlanning.Application.src.GameFeature.Commands.StartVoting;
+using PokerPlanning.Application.src.GameFeature.Commands.RevealCards;
 using PokerPlanning.Application.src.GameFeature.Errors;
-using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.TestUtils.ModelUtils;
 
 namespace PokerPlanning.Application.UnitTests.GameFeature.Commands;
 
-public class StartVotingCommandHandlerTests
+public class RevealCardsCommandHandlerTests
 {
     private readonly Mock<IGameRepository> _gameRepository;
     private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly StartVotingCommandHandler _handler;
+    private readonly RevealCardsCommandHandler _handler;
 
-    public StartVotingCommandHandlerTests()
+    public RevealCardsCommandHandlerTests()
     {
         _gameRepository = new Mock<IGameRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
-        _handler = new StartVotingCommandHandler(
+        _handler = new RevealCardsCommandHandler(
             _gameRepository.Object,
             _unitOfWork.Object
         );
     }
 
     [Fact]
-    public async Task StartVotingCommandHandler_WhenParticipantFound_AndStartVotingProcessIsSuccess_ShouldNotThrowExceptions()
+    public async Task RevealCardsCommandHandler_WhenParticipantFound_AndRevealingCardsIsSuccess_ShouldNotThrowExceptions()
     {
-        var command = StartVotingCommandUtils.CreateCommand();
+        var command = RevealCardsCommandUtils.CreateCommand();
         _gameRepository.Setup(g => g.GetParticipant(
             It.Is<Guid>(gid => gid == command.GameId),
             It.Is<Guid>(uid => uid == command.UserId),
             default
-        )).ReturnsAsync(StartVotingCommandUtils.CreateParticipant(ParticipantRole.Master));
+        )).ReturnsAsync(RevealCardsCommandUtils.CreateParticipant(ParticipantRole.Master));
 
         await _handler.Handle(command, default);
         _unitOfWork.Verify(uow => uow.SaveAsync(default), Times.Once);
     }
 
     [Fact]
-    public async Task StartVotingCommandHandler_WhenParticipantNotFound_ShouldThrowException()
+    public async Task RevealCardsCommandHandler_WhenParticipantNotFound_ShouldThrowException()
     {
-        var command = StartVotingCommandUtils.CreateCommand();
+        var command = RevealCardsCommandUtils.CreateCommand();
         _gameRepository.Setup(g => g.GetParticipant(
             It.Is<Guid>(gid => gid == command.GameId),
             It.Is<Guid>(uid => uid == command.UserId),
@@ -58,28 +55,29 @@ public class StartVotingCommandHandlerTests
     }
 
     [Fact]
-    public async Task StartVotingCommandHandler_WhenParticipantFound_AndFinishVotingProcessIsFailed_ShouldThrowException()
+    public async Task RevealCardsCommandHandler_WhenParticipantFound_AndRevealCardsIsFailed_ShouldThrowException()
     {
-        var command = StartVotingCommandUtils.CreateCommand();
+        var command = RevealCardsCommandUtils.CreateCommand();
         _gameRepository.Setup(g => g.GetParticipant(
             It.Is<Guid>(gid => gid == command.GameId),
             It.Is<Guid>(uid => uid == command.UserId),
             default
-        )).ReturnsAsync(StartVotingCommandUtils.CreateParticipant(ParticipantRole.VotingMember));
+        )).ReturnsAsync(RevealCardsCommandUtils.CreateParticipant(ParticipantRole.VotingMember));
 
         await Assert.ThrowsAsync<ChangingVotingProcessException>(() => _handler.Handle(command, default));
         _unitOfWork.Verify(uow => uow.SaveAsync(default), Times.Never);
     }
 }
 
-public class StartVotingCommandUtils
+
+
+public class RevealCardsCommandUtils
 {
-    public static StartVotingCommand CreateCommand()
+    public static RevealCardsCommand CreateCommand()
     {
-        return new StartVotingCommand(
+        return new RevealCardsCommand(
             GameId: Guid.Parse("80906f84-ace1-404e-a3e7-baf8c06737ac"),
-            UserId: Guid.Parse("82e1c6cb-7dcd-40e7-a45b-49b613c1400b"),
-            TicketId: Guid.Parse("667bc009-ba40-4c90-aab8-173b0fc3a5c4")
+            UserId: Guid.Parse("82e1c6cb-7dcd-40e7-a45b-49b613c1400b")
         );
     }
 

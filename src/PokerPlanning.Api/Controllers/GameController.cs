@@ -16,6 +16,7 @@ using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
 using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 using PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
 using PokerPlanning.Application.src.GameFeature.Commands.DeleteTicket;
+using PokerPlanning.Application.src.GameFeature.Commands.RevealCards;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -96,13 +97,32 @@ public class GameController : ControllerBase
         return Ok();
     }
 
+    [HttpPut("{gameId}/reveal-cards")]
+    [Authorize]
+    public async Task<ActionResult> RevealCards([FromRoute] Guid gameId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+
+        await _sender.Send(new RevealCardsCommand(
+            GameId: gameId,
+            UserId: new Guid(userId)
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.CardsRevealed
+            );
+
+        return Ok();
+    }
+
     [HttpPut("{gameId}/finish-voting")]
     [Authorize]
     public async Task<ActionResult> FinishVoting([FromRoute] Guid gameId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
 
-        await _sender.Send(new FinishVotingCommand(
+        var result = await _sender.Send(new FinishVotingCommand(
             GameId: gameId,
             UserId: new Guid(userId)
         ));
@@ -112,7 +132,7 @@ public class GameController : ControllerBase
                 GameHubMethods.VotingFinished
             );
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpPut("{gameId}/vote")]

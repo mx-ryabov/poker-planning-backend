@@ -26,7 +26,12 @@ public class GetParticipantByGameAndUserIdHandler : IRequestHandler<GetParticipa
             DisplayName: participant.DisplayName,
             Online: participant.Online,
             Role: participant.Role,
-            UserId: participant.UserId
+            UserId: participant.UserId,
+            Vote: participant.Vote is null ? null : new GameVoteResult(
+                Id: participant.Vote.Id,
+                Value: participant.Vote.Value,
+                Suit: participant.Vote.Suit
+            )
         );
     }
 }

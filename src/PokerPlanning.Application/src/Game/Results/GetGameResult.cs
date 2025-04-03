@@ -10,5 +10,6 @@ public record GetGameResult(
     GameVotingProcessResult VotingProcess,
     VotingSystemResult VotingSystem,
     IEnumerable<GameParticipantResult> Participants,
-    IEnumerable<GameTicketResult> Tickets
+    IEnumerable<GameTicketResult> Tickets,
+    IEnumerable<GameVotingResultResult> VotingResults
 );

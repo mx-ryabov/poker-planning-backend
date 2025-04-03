@@ -32,7 +32,7 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
                 IsAutoRevealCards: game.Settings.IsAutoRevealCards
             ),
             VotingProcess: new GameVotingProcessResult(
-                IsActive: game.VotingProcess.IsActive,
+                Status: game.VotingProcess.Status,
                 TicketId: game.VotingProcess.TicketId
             ),
             VotingSystem: new VotingSystemResult(
@@ -52,7 +52,12 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
                 DisplayName: p.DisplayName,
                 Online: p.Online,
                 Role: p.Role,
-                UserId: p.UserId
+                UserId: p.UserId,
+                Vote: p.Vote is null ? null : new GameVoteResult(
+                    Id: p.Vote.Id,
+                    Value: p.Vote.Value,
+                    Suit: p.Vote.Suit
+                )
             )),
             Tickets: game.Tickets.Select(t => new GameTicketResult(
                 Id: t.Id,
@@ -62,6 +67,21 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
                 Type: t.Type,
                 Identifier: t.Identifier,
                 Estimation: t.Estimation
+            )),
+            VotingResults: game.VotingResults.Select(vr => new GameVotingResultResult(
+                Id: vr.Id,
+                TicketId: vr.TicketId,
+                CreatedAt: vr.CreatedAt,
+                Votes: vr.Votes.Select(vote => new GameVotingResultVoteResult(
+                    Id: vote.Id,
+                    VoteId: vote.VoteId,
+                    Vote: vote.Vote is null ? null : new GameVoteResult(
+                        Id: vote.Vote.Id,
+                        Value: vote.Vote.Value,
+                        Suit: vote.Vote.Suit
+                    ),
+                    ParticipantId: vote.ParticipantId
+                ))
             ))
         );
     }
