@@ -46,7 +46,7 @@ public class GameControllerTests : BaseIntegrationTest
     {
         var votingSystem = await _helper.GetVotingSystem();
         votingSystem.Should().NotBeNull();
-        var invalidData = new{};
+        var invalidData = new { };
 
         var response = await _client.PostAsJsonAsync("/api/games", invalidData);
 
@@ -141,13 +141,36 @@ public class GameControllerTests : BaseIntegrationTest
         var request = new StartVotingRequest(ticket!.Id);
 
         var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/start-voting", request);
-        
+
         response.EnsureSuccessStatusCode();
         var createdGame = await _dbContext.Games
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
-        createdGame.VotingProcess.IsActive.Should().BeTrue();
+        createdGame.VotingProcess.Status.Should().Be(VotingStatus.InProgress);
         createdGame.VotingProcess.TicketId.Should().Be(ticket!.Id);
+        _helper.SetToken(null);
+    }
+
+    [Fact]
+    public async Task RevealingCards_ValidRequest_ReturnsSuccessCode()
+    {
+        var game = await _helper.CreateGame();
+        _helper.SetToken(game!.MasterToken);
+        var ticket = await _helper.AddTicketToGame(game.Id);
+        await _helper.StartVoting(game!.Id, ticket!.Id);
+
+        var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/reveal-cards", new object());
+
+        response.EnsureSuccessStatusCode();
+        var createdGame = await _dbContext.Games
+                .Include(g => g.VotingResults)
+                .ThenInclude(vr => vr.Votes)
+                .Include(g => g.Participants)
+                .SingleAsync(g => g.Id == game!.Id);
+        createdGame.Should().NotBeNull();
+        createdGame.VotingProcess.Status.Should().Be(VotingStatus.Revealed);
+        createdGame.VotingProcess.TicketId.Should().Be(ticket!.Id);
+        createdGame.VotingResults.Count.Should().Be(0);
         _helper.SetToken(null);
     }
 
@@ -158,7 +181,7 @@ public class GameControllerTests : BaseIntegrationTest
         _helper.SetToken(game!.MasterToken);
         var ticket = await _helper.AddTicketToGame(game.Id);
         await _helper.StartVoting(game!.Id, ticket!.Id);
-        
+
         var response = await _client.PutAsJsonAsync($"/api/games/{game!.Id}/finish-voting", new object());
 
         response.EnsureSuccessStatusCode();
@@ -168,7 +191,7 @@ public class GameControllerTests : BaseIntegrationTest
                 .Include(g => g.Participants)
                 .SingleAsync(g => g.Id == game!.Id);
         createdGame.Should().NotBeNull();
-        createdGame.VotingProcess.IsActive.Should().BeFalse();
+        createdGame.VotingProcess.Status.Should().Be(VotingStatus.Inactive);
         createdGame.VotingProcess.TicketId.Should().Be(null);
         createdGame.VotingResults.Count.Should().Be(1);
         createdGame.VotingResults.First().Votes.Count.Should().Be(1);

@@ -7,5 +7,6 @@ public record GameParticipantResult(
     string DisplayName,
     bool Online,
     ParticipantRole Role,
-    Guid? UserId
+    Guid? UserId,
+    GameVoteResult? Vote
 );

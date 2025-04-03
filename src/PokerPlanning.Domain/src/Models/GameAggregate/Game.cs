@@ -50,26 +50,50 @@ public class Game : AggregateRoot<Guid>
             );
         }
 
-        VotingProcess.IsActive = true;
+        VotingProcess.Status = VotingStatus.InProgress;
         VotingProcess.TicketId = ticketId;
         return UpdateResult.Ok();
     }
 
-    public UpdateResult FinishVotingProcess(Participant initiator)
+    public UpdateResult RevealCards(Participant initiator)
     {
-        var canStart = IsParticipantCanChangeVotingProcess(initiator);
-        if (!canStart)
+        var canReveal = IsParticipantCanChangeVotingProcess(initiator);
+        if (!canReveal)
         {
             return UpdateResult.Error(
+                new() { "This participant isn't allowed to reveal cards in the voting process." }
+            );
+        }
+        if (VotingProcess.Status == VotingStatus.Revealed)
+        {
+            return UpdateResult.Ok();
+        }
+        if (VotingProcess.Status != VotingStatus.InProgress)
+        {
+            return UpdateResult.Error(
+                new() { "The Voting Process must be In Progress before the cards are releaved" }
+            );
+        }
+
+        VotingProcess.Status = VotingStatus.Revealed;
+        return UpdateResult.Ok();
+    }
+
+    public UpdateResultWithData<VotingResult> FinishVotingProcess(Participant initiator)
+    {
+        var canFinish = IsParticipantCanChangeVotingProcess(initiator);
+        if (!canFinish)
+        {
+            return UpdateResultWithData<VotingResult>.Error(
                 new() { "This participant isn't allowed to finish the voting process." }
             );
         }
 
         CollectVotingResults();
 
-        VotingProcess.IsActive = false;
+        VotingProcess.Status = VotingStatus.Inactive;
         VotingProcess.TicketId = null;
-        return UpdateResult.Ok();
+        return UpdateResultWithData<VotingResult>.Ok(VotingResults.Last());
     }
 
     public UpdateResult AddParticipant(Participant participant)

@@ -32,7 +32,7 @@ public class ParticipantTests
 
     [Theory]
     [MemberData(nameof(DoVoteData))]
-    public void Participant_DoVote_ShouldUpdateParticipantOrReturnError(string? voteIdStr, bool isGameActive, bool expectedSuccess, string? expectedVoteIdStr)
+    public void Participant_DoVote_ShouldUpdateParticipantOrReturnError(string? voteIdStr, VotingStatus votingStatus, bool expectedSuccess, string? expectedVoteIdStr)
     {
         var participant = ParticipantUtils.CreateParticipant(ParticipantRole.VotingMember);
         var game = GameUtils.CreateGame(
@@ -40,7 +40,7 @@ public class ParticipantTests
         );
         Guid? voteId = voteIdStr != null ? Guid.Parse(voteIdStr) : null;
         Guid? expectedVoteId = expectedVoteIdStr != null ? Guid.Parse(expectedVoteIdStr) : null;
-        game.VotingProcess.IsActive = isGameActive;
+        game.VotingProcess.Status = votingStatus;
         participant.Game = game;
 
         var result = participant.DoVote(voteId);
@@ -52,10 +52,12 @@ public class ParticipantTests
     public static IEnumerable<object[]> DoVoteData =>
         new List<object[]>
         {
-            new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
-            new object[] { null, true, true, null },
-            new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, false, null },
-            new object[] { null, false, false, null },
+            new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", VotingStatus.InProgress, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
+            new object[] { null, VotingStatus.InProgress, true, null },
+            new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", VotingStatus.Inactive, false, null },
+            new object[] { "a9c5f623-88f4-4756-8a84-e3291b503c0d", VotingStatus.Revealed, false, null },
+            new object[] { null, VotingStatus.Inactive, false, null },
+            new object[] { null, VotingStatus.Revealed, false, null },
         };
 
     [Fact]

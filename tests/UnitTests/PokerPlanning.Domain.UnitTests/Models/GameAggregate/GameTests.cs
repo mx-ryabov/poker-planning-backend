@@ -21,7 +21,7 @@ public class GameTests
 
     [Theory]
     [MemberData(nameof(StartVotingProcessData))]
-    public void Game_StartVotingProcess_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, string? ticketIdStr, bool expectedSuccess, bool expectedIsActive, string? expectedTicketIdStr)
+    public void Game_StartVotingProcess_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, string? ticketIdStr, bool expectedSuccess, VotingStatus expectedStatus, string? expectedTicketIdStr)
     {
         Guid? ticketId = ticketIdStr != null ? Guid.Parse(ticketIdStr) : null;
         Guid? expectedTicketId = expectedTicketIdStr != null ? Guid.Parse(expectedTicketIdStr) : null;
@@ -33,23 +33,55 @@ public class GameTests
         var result = game.StartVotingProcess(gameChanger, ticketId);
 
         result.Success.Should().Be(expectedSuccess);
-        game.VotingProcess.IsActive.Should().Be(expectedIsActive);
+        game.VotingProcess.Status.Should().Be(expectedStatus);
         game.VotingProcess.TicketId.Should().Be(expectedTicketId);
     }
 
     public static IEnumerable<object[]> StartVotingProcessData =>
         new List<object[]>
         {
-            new object[] { ParticipantRole.Master, null, true, true, null },
-            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
-            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, false, null },
-            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, false, null },
-            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
+            new object[] { ParticipantRole.Master, null, true, VotingStatus.InProgress, null },
+            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, VotingStatus.InProgress, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
+            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, VotingStatus.Inactive, null },
+            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, VotingStatus.Inactive, null },
+            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, VotingStatus.InProgress, "a9c5f623-88f4-4756-8a84-e3291b503c0d" },
+        };
+
+    [Theory]
+    [MemberData(nameof(RevealCardsVotingProcessData))]
+    public void Game_RevealCards_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, VotingStatus initStatus, bool expectedSuccess, VotingStatus expectedStatus)
+    {
+        var gameChanger = ParticipantUtils.CreateParticipant(gameChangerRole);
+        var game = GameUtils.CreateGame(
+            master: ParticipantUtils.CreateParticipant(ParticipantRole.Master)
+        );
+        game.VotingProcess.Status = initStatus;
+
+        var result = game.RevealCards(gameChanger);
+
+        result.Success.Should().Be(expectedSuccess);
+        game.VotingProcess.Status.Should().Be(expectedStatus);
+    }
+
+    public static IEnumerable<object[]> RevealCardsVotingProcessData =>
+        new List<object[]>
+        {
+            new object[] { ParticipantRole.Master, VotingStatus.InProgress, true, VotingStatus.Revealed },
+            new object[] { ParticipantRole.Master, VotingStatus.Inactive, false, VotingStatus.Inactive },
+            new object[] { ParticipantRole.Master, VotingStatus.Revealed, true, VotingStatus.Revealed },
         };
 
     [Theory]
     [MemberData(nameof(FinishVotingProcessData))]
-    public void Game_FinishVotingProcess_ShouldUpdateVotingProcessOrReturnError(ParticipantRole gameChangerRole, string? ticketIdStr, bool expectedSuccess, bool expectedIsActive, string? expectedTicketIdStr, int expectedVotingResultsCount)
+    public void Game_FinishVotingProcess_ShouldUpdateVotingProcessOrReturnError(
+        ParticipantRole gameChangerRole,
+        string? ticketIdStr,
+        bool expectedSuccess,
+        VotingStatus expectedStatus,
+        string? expectedTicketIdStr,
+        int expectedVotingResultsCount,
+        int expectedVotesCount
+    )
     {
         Guid? ticketId = ticketIdStr != null ? Guid.Parse(ticketIdStr) : null;
         Guid? expectedTicketId = expectedTicketIdStr != null ? Guid.Parse(expectedTicketIdStr) : null;
@@ -57,25 +89,27 @@ public class GameTests
         var game = GameUtils.CreateGame(
             master: ParticipantUtils.CreateParticipant(ParticipantRole.Master)
         );
-        game.VotingProcess.IsActive = true;
+        game.VotingProcess.Status = VotingStatus.InProgress;
         game.VotingProcess.TicketId = ticketId;
 
         var result = game.FinishVotingProcess(gameChanger);
 
         result.Success.Should().Be(expectedSuccess);
-        game.VotingProcess.IsActive.Should().Be(expectedIsActive);
+        game.VotingProcess.Status.Should().Be(expectedStatus);
         game.VotingProcess.TicketId.Should().Be(expectedTicketId);
         game.VotingResults.Should().HaveCount(expectedVotingResultsCount);
+        result.Data?.Votes.Should().HaveCount(expectedVotesCount);
+        // TODO: check if FinishVotingProcess returns the latest VotingResult
     }
 
     public static IEnumerable<object[]> FinishVotingProcessData =>
         new List<object[]>
         {
-            new object[] { ParticipantRole.Master, null, true, false, null, 1 },
-            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null, 1 },
-            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0 },
-            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, true, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0 },
-            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, false, null, 1 },
+            new object[] { ParticipantRole.Master, null, true, VotingStatus.Inactive, null, 1, 1 },
+            new object[] { ParticipantRole.Master, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, VotingStatus.Inactive, null, 1, 1 },
+            new object[] { ParticipantRole.VotingMember, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, VotingStatus.InProgress, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0, 0 },
+            new object[] { ParticipantRole.Spectator, "a9c5f623-88f4-4756-8a84-e3291b503c0d", false, VotingStatus.InProgress, "a9c5f623-88f4-4756-8a84-e3291b503c0d", 0, 0 },
+            new object[] { ParticipantRole.Manager, "a9c5f623-88f4-4756-8a84-e3291b503c0d", true, VotingStatus.Inactive, null, 1, 1 },
         };
 
     [Theory]

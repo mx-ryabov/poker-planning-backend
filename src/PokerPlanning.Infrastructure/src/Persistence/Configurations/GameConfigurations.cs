@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PokerPlanning.Domain.src.Models.GameAggregate;
+using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 
 namespace PokerPlanning.Infrastructure.src.Persistence.Configurations;
 
@@ -26,7 +27,7 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
                 vpb.HasOne(vp => vp.Ticket)
                     .WithOne()
                     .IsRequired(false);
-                vpb.Property(vp => vp.IsActive).IsRequired().HasDefaultValue(false);
+                vpb.Property(vp => vp.Status).IsRequired().HasDefaultValue(VotingStatus.Inactive);
             });
         builder.HasOne(g => g.VotingSystem)
             .WithMany()
