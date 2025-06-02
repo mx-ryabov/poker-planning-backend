@@ -1,7 +1,7 @@
-using FluentAssertions;
 using Moq;
 using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
+using PokerPlanning.Application.src.Common.Interfaces.Services;
 using PokerPlanning.Application.src.GameFeature.Commands.RevealCards;
 using PokerPlanning.Application.src.GameFeature.Errors;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
@@ -14,15 +14,18 @@ public class RevealCardsCommandHandlerTests
 {
     private readonly Mock<IGameRepository> _gameRepository;
     private readonly Mock<IUnitOfWork> _unitOfWork;
+    private readonly Mock<IGameTimer> _gameTimer;
     private readonly RevealCardsCommandHandler _handler;
 
     public RevealCardsCommandHandlerTests()
     {
         _gameRepository = new Mock<IGameRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
+        _gameTimer = new Mock<IGameTimer>();
         _handler = new RevealCardsCommandHandler(
             _gameRepository.Object,
-            _unitOfWork.Object
+            _unitOfWork.Object,
+            _gameTimer.Object
         );
     }
 
