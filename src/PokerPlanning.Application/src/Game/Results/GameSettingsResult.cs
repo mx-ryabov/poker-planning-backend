@@ -1,5 +1,6 @@
 namespace PokerPlanning.Application.src.GameFeature.Results;
 
 public record GameSettingsResult(
-    bool IsAutoRevealCards
+    bool IsAutoRevealCards,
+    int? AutoRevealPeriod
 );

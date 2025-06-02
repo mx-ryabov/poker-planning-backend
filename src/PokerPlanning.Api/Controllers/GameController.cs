@@ -17,6 +17,9 @@ using PokerPlanning.Application.src.GameFeature.Queries.GetParticipantById;
 using PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
 using PokerPlanning.Application.src.GameFeature.Commands.DeleteTicket;
 using PokerPlanning.Application.src.GameFeature.Commands.RevealCards;
+using PokerPlanning.Application.src.GameFeature.Commands.UpdateTicket;
+using PokerPlanning.Application.src.GameFeature.Commands.UpdateGameSettings;
+using PokerPlanning.Domain.src.Common.DTO;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -27,7 +30,9 @@ public class GameController : ControllerBase
     private readonly ISender _sender;
     private readonly IHubContext<GameHub> _hubContext;
 
-    public GameController(ISender sender, IHubContext<GameHub> hubContext)
+    public GameController(
+        ISender sender,
+        IHubContext<GameHub> hubContext)
     {
         _sender = sender;
         _hubContext = hubContext;
@@ -60,7 +65,8 @@ public class GameController : ControllerBase
             Name: gameResult.Name,
             Link: gameResult.Link,
             Settings: new CreateGameSettingResponse(
-                IsAutoRevealCards: gameResult.Settings.IsAutoRevealCards
+                IsAutoRevealCards: gameResult.Settings.IsAutoRevealCards,
+                AutoRevealPeriod: gameResult.Settings.AutoRevealPeriod
             ),
             MasterToken: gameResult.MasterToken
         );
@@ -80,21 +86,30 @@ public class GameController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
 
-        await _sender.Send(new StartVotingCommand(
+        var result = await _sender.Send(new StartVotingCommand(
             GameId: gameId,
             UserId: new Guid(userId),
-            TicketId: request.TicketId
+            TicketId: request.TicketId,
+            OnTimeIsUp: () =>
+            {
+                _hubContext.Clients
+                    .Group(gameId.ToString())
+                    .SendAsync(
+                        GameHubMethods.CardsRevealed
+                    );
+            }
         ));
         await _hubContext.Clients
             .Group(gameId.ToString())
             .SendAsync(
                 GameHubMethods.VotingStarted,
                 new VotingStartedResponse(
-                    request.TicketId
+                    TicketId: request.TicketId,
+                    StartTime: result.StartTime
                 )
             );
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpPut("{gameId}/reveal-cards")]
@@ -129,7 +144,8 @@ public class GameController : ControllerBase
         await _hubContext.Clients
             .Group(gameId.ToString())
             .SendAsync(
-                GameHubMethods.VotingFinished
+                GameHubMethods.VotingFinished,
+                result
             );
 
         return Ok(result);
@@ -228,5 +244,44 @@ public class GameController : ControllerBase
                 ticketId
             );
         return Ok(ticketResult);
+    }
+
+    [HttpPut("{gameId}/settings")]
+    [Authorize]
+    public async Task<ActionResult> UpdateGameSettings([FromRoute] Guid gameId, [FromBody] UpdateGameSettingsRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+        var updateSettingsResult = await _sender.Send(new UpdateGameSettingsCommand(
+            GameId: gameId,
+            UserId: Guid.Parse(userId),
+            Data: new UpdateGameSettingsDTO(
+                Name: request.Name,
+                IsAutoRevealCards: request.IsAutoRevealCards,
+                AutoRevealPeriod: request.AutoRevealPeriod,
+                GameMasterId: request.GameMasterId
+            )
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(
+                GameHubMethods.SettingsUpdated,
+                updateSettingsResult
+            );
+
+        foreach (var p in updateSettingsResult.UpdatedParticipants)
+        {
+            var participantUserId = p.UserId.ToString();
+            if (participantUserId is not null)
+            {
+                await _hubContext.Clients
+                    .User(participantUserId)
+                    .SendAsync(
+                        GameHubMethods.CurrentParticipantUpdated,
+                        p
+                    );
+            }
+        }
+
+        return Ok(updateSettingsResult);
     }
 }

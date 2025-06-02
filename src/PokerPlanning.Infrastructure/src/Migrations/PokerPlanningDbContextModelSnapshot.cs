@@ -752,8 +752,15 @@ namespace PokerPlanning.Infrastructure.Migrations
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
 
+                            b1.Property<int>("AutoRevealPeriod")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasDefaultValue(120);
+
                             b1.Property<bool>("IsAutoRevealCards")
-                                .HasColumnType("boolean");
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(false);
 
                             b1.HasKey("GameId");
 
@@ -767,6 +774,9 @@ namespace PokerPlanning.Infrastructure.Migrations
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("uuid");
+
+                            b1.Property<DateTime?>("StartTime")
+                                .HasColumnType("timestamp with time zone");
 
                             b1.Property<int>("Status")
                                 .ValueGeneratedOnAdd()

@@ -1,6 +1,12 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS base
 WORKDIR /app
 EXPOSE 5011
+
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+RUN dotnet tool install --global dotnet-ef --version 7.0.14
+ENV PATH="$PATH:/root/.dotnet/tools"
 
 ENV ASPNETCORE_URLS=http://+:5011
 
@@ -22,4 +28,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "PokerPlanning.Api.dll"]
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]

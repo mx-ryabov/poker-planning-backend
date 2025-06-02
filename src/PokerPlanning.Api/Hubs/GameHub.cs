@@ -63,4 +63,6 @@ public static class GameHubMethods
     public static readonly string TicketAdded = "TicketAdded";
     public static readonly string TicketUpdated = "TicketUpdated";
     public static readonly string TicketDeleted = "TicketDeleted";
+    public static readonly string SettingsUpdated = "SettingsUpdated";
+    public static readonly string CurrentParticipantUpdated = "CurrentParticipantUpdated";
 }

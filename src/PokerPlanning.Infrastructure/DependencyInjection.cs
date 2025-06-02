@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using PokerPlanning.Application.src.Common.Interfaces.Authentication;
 using PokerPlanning.Application.src.Common.Interfaces.Services;
 using PokerPlanning.Infrastructure.src.Authentication;
-using PokerPlanning.Infrastructure.src.Authentication.Services;
+using PokerPlanning.Infrastructure.src.Services;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Infrastructure.src.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Quartz;
 
 namespace PokerPlanning.Infrastructure;
 
@@ -56,6 +57,9 @@ public static class DependencyInjection
     {
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddQuartz();
+        services.AddSingleton<ITaskScheduler, CustomTaskScheduler>();
+        services.AddScoped<IGameTimer, GameTimer>();
         return services;
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PokerPlanning.Domain.src.BaseModels;
 using PokerPlanning.Domain.src.Common.DTO;
 using PokerPlanning.Domain.src.Common.Results;
@@ -40,19 +41,69 @@ public class Game : AggregateRoot<Guid>
         return game;
     }
 
-    public UpdateResult StartVotingProcess(Participant initiator, Guid? ticketId)
+    public UpdateResultWithData<GameSettingsDTO> UpdateGameSettings(ParticipantRole initiatorRole, UpdateGameSettingsDTO settings)
+    {
+        if (!IsParticipantCanChangeGameSettings(initiatorRole))
+        {
+            return UpdateResultWithData<GameSettingsDTO>.Error(
+                new() { "This user doesn't have permissions to update game's settings." }
+            );
+        }
+
+        if (VotingProcess.Status == VotingStatus.InProgress && (settings.IsAutoRevealCards is not null || settings.AutoRevealPeriod is not null))
+        {
+            return UpdateResultWithData<GameSettingsDTO>.Error(
+                new() { "You can't update the auto-revealing settings when the voting process in progress" }
+            );
+        }
+
+        Name = settings.Name ?? Name;
+        UpdateAutoRevealingSetting(settings.IsAutoRevealCards, settings.AutoRevealPeriod);
+
+        if (settings.GameMasterId is not null)
+        {
+            var result = ChangeGameMaster(settings.GameMasterId.Value);
+            if (result.Success && result.Data is not null)
+            {
+                return UpdateResultWithData<GameSettingsDTO>.Ok(new GameSettingsDTO(
+                    Name: Name,
+                    IsAutoRevealCards: Settings.IsAutoRevealCards,
+                    AutoRevealPeriod: Settings.AutoRevealPeriod,
+                    UpdatedParticipants: result.Data
+                ));
+            }
+            else
+            {
+                return UpdateResultWithData<GameSettingsDTO>.Error(result.Errors);
+            }
+        }
+
+        return UpdateResultWithData<GameSettingsDTO>.Ok(new GameSettingsDTO(
+                    Name: Name,
+                    IsAutoRevealCards: Settings.IsAutoRevealCards,
+                    AutoRevealPeriod: Settings.AutoRevealPeriod,
+                    UpdatedParticipants: new List<Participant>()
+                ));
+    }
+
+    public UpdateResultWithData<StartVotingProcessDTO> StartVotingProcess(Participant initiator, Guid? ticketId)
     {
         var canStart = IsParticipantCanChangeVotingProcess(initiator);
         if (!canStart)
         {
-            return UpdateResult.Error(
+            return UpdateResultWithData<StartVotingProcessDTO>.Error(
                 new() { "This participant isn't allowed to start the voting process." }
             );
         }
 
         VotingProcess.Status = VotingStatus.InProgress;
         VotingProcess.TicketId = ticketId;
-        return UpdateResult.Ok();
+        var now = DateTime.UtcNow;
+        VotingProcess.StartTime = now;
+        return UpdateResultWithData<StartVotingProcessDTO>.Ok(
+                new StartVotingProcessDTO(
+                    StartTime: now
+                ));
     }
 
     public UpdateResult RevealCards(Participant initiator)
@@ -76,6 +127,7 @@ public class Game : AggregateRoot<Guid>
         }
 
         VotingProcess.Status = VotingStatus.Revealed;
+        VotingProcess.StartTime = null;
         return UpdateResult.Ok();
     }
 
@@ -93,6 +145,12 @@ public class Game : AggregateRoot<Guid>
 
         VotingProcess.Status = VotingStatus.Inactive;
         VotingProcess.TicketId = null;
+        VotingProcess.StartTime = null;
+        Participants.ForEach(p =>
+        {
+            p.VoteId = null;
+            p.Vote = null;
+        });
         return UpdateResultWithData<VotingResult>.Ok(VotingResults.Last());
     }
 
@@ -166,6 +224,38 @@ public class Game : AggregateRoot<Guid>
         return UpdateResult.Error(new() { "There no tickets in this game with such ID." });
     }
 
+    private void UpdateAutoRevealingSetting(bool? IsAutoRevealCards, int? AutoRevealPeriod)
+    {
+        Settings.IsAutoRevealCards = IsAutoRevealCards ?? Settings.IsAutoRevealCards;
+        if (Settings.IsAutoRevealCards)
+        {
+            Settings.AutoRevealPeriod = AutoRevealPeriod ?? Settings.AutoRevealPeriod;
+        }
+    }
+
+    private UpdateResultWithData<IEnumerable<Participant>> ChangeGameMaster(Guid newGameMasterId)
+    {
+        var newMaster = Participants.Find(p => p.Id == newGameMasterId);
+        if (newMaster is not null)
+        {
+            var oldMaster = Participants.Find(p => p.Role == ParticipantRole.Master);
+            newMaster.Role = ParticipantRole.Master;
+            var participantForUpdate = new List<Participant>() {
+                    newMaster
+                };
+            if (oldMaster is not null)
+            {
+                oldMaster.Role = ParticipantRole.VotingMember;
+                participantForUpdate.Add(oldMaster);
+            }
+            return UpdateResultWithData<IEnumerable<Participant>>.Ok(participantForUpdate);
+        }
+        return UpdateResultWithData<IEnumerable<Participant>>
+                        .Error(new() {
+                            "There is no a participant with the provided id in this game."
+                        });
+    }
+
     private void CollectVotingResults()
     {
         var votes = new List<VotingResultVote>();
@@ -199,5 +289,10 @@ public class Game : AggregateRoot<Guid>
     {
         var allowedRolesForChanging = new List<ParticipantRole>() { ParticipantRole.Master, ParticipantRole.Manager };
         return allowedRolesForChanging.Contains(participant.Role);
+    }
+
+    private static bool IsParticipantCanChangeGameSettings(ParticipantRole participantRole)
+    {
+        return participantRole == ParticipantRole.Master;
     }
 }

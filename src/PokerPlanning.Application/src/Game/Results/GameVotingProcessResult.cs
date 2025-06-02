@@ -4,5 +4,6 @@ namespace PokerPlanning.Application.src.GameFeature.Results;
 
 public record GameVotingProcessResult(
     VotingStatus Status,
-    Guid? TicketId
+    GameTicketResult? Ticket,
+    DateTime? StartTime
 );

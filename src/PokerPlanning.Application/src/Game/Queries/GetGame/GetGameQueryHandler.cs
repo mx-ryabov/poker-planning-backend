@@ -29,11 +29,21 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
             Name: game.Name,
             Link: game.Link,
             Settings: new GameSettingsResult(
-                IsAutoRevealCards: game.Settings.IsAutoRevealCards
+                IsAutoRevealCards: game.Settings.IsAutoRevealCards,
+                AutoRevealPeriod: game.Settings.AutoRevealPeriod
             ),
             VotingProcess: new GameVotingProcessResult(
                 Status: game.VotingProcess.Status,
-                TicketId: game.VotingProcess.TicketId
+                StartTime: game.VotingProcess.StartTime,
+                Ticket: game.VotingProcess.Ticket is null ? null : new GameTicketResult(
+                    Id: game.VotingProcess.Ticket.Id,
+                    Title: game.VotingProcess.Ticket.Title,
+                    Description: game.VotingProcess.Ticket.Description,
+                    Link: game.VotingProcess.Ticket.Link,
+                    Type: game.VotingProcess.Ticket.Type,
+                    Identifier: game.VotingProcess.Ticket.Identifier,
+                    Estimation: game.VotingProcess.Ticket.Estimation
+                )
             ),
             VotingSystem: new VotingSystemResult(
                 Id: game.VotingSystem.Id,
@@ -56,7 +66,8 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
                 Vote: p.Vote is null ? null : new GameVoteResult(
                     Id: p.Vote.Id,
                     Value: p.Vote.Value,
-                    Suit: p.Vote.Suit
+                    Suit: p.Vote.Suit,
+                    Order: p.Vote.Order
                 )
             )),
             Tickets: game.Tickets.Select(t => new GameTicketResult(
@@ -78,7 +89,8 @@ public class GetGameQueryHandler : IRequestHandler<GetGameQuery, GetGameResult>
                     Vote: vote.Vote is null ? null : new GameVoteResult(
                         Id: vote.Vote.Id,
                         Value: vote.Vote.Value,
-                        Suit: vote.Vote.Suit
+                        Suit: vote.Vote.Suit,
+                        Order: vote.Vote.Order
                     ),
                     ParticipantId: vote.ParticipantId
                 ))

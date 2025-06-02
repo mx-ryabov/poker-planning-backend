@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 
@@ -19,7 +20,16 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
             .IsRequired()
             .HasDefaultValue(1)
             .HasColumnType("integer");
-        builder.OwnsOne(g => g.Settings);
+        builder.OwnsOne(
+            g => g.Settings,
+            settings =>
+            {
+                settings.Property(s => s.IsAutoRevealCards).HasDefaultValue(false);
+                settings.Property(s => s.AutoRevealPeriod).HasDefaultValue(120);
+            });
+        var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+            v => v.ToUniversalTime(),
+            v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         builder.OwnsOne(
             g => g.VotingProcess,
             vpb =>
@@ -28,6 +38,9 @@ public class GameConfigurations : IEntityTypeConfiguration<Game>
                     .WithOne()
                     .IsRequired(false);
                 vpb.Property(vp => vp.Status).IsRequired().HasDefaultValue(VotingStatus.Inactive);
+                vpb.Property(vp => vp.StartTime)
+                    .HasConversion(dateTimeConverter)
+                    .HasDefaultValue(null);
             });
         builder.HasOne(g => g.VotingSystem)
             .WithMany()
