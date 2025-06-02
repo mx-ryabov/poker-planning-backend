@@ -1,6 +1,6 @@
 using PokerPlanning.Application.src.Common.Interfaces.Services;
 
-namespace PokerPlanning.Infrastructure.src.Authentication.Services;
+namespace PokerPlanning.Infrastructure.src.Services;
 
 public class DateTimeProvider : IDateTimeProvider
 {

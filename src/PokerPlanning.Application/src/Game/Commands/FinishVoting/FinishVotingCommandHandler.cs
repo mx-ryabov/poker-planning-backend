@@ -39,7 +39,8 @@ public class FinishVotingCommandHandler : IRequestHandler<FinishVotingCommand, G
                 Vote: v.Vote is null ? null : new GameVoteResult(
                     Id: v.Vote.Id,
                     Value: v.Vote.Value,
-                    Suit: v.Vote.Suit
+                    Suit: v.Vote.Suit,
+                    Order: v.Vote.Order
                 ),
                 ParticipantId: v.ParticipantId
             ))

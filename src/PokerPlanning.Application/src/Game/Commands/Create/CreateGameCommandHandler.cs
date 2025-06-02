@@ -64,7 +64,10 @@ public class CreateGameCommandHandler :
             Id: game.Id,
             Name: game.Name,
             Link: game.Link,
-            Settings: new GameSettingsResult(game.Settings.IsAutoRevealCards),
+            Settings: new GameSettingsResult(
+                IsAutoRevealCards: game.Settings.IsAutoRevealCards,
+                AutoRevealPeriod: game.Settings.AutoRevealPeriod
+            ),
             Participants: game.Participants.Select(
                 p => new GameParticipantResult(
                     p.Id,

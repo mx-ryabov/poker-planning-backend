@@ -30,6 +30,7 @@ public class GameRepository : IGameRepository
         return await _dbContext.Games
             .Include(g => g.VotingSystem)
             .ThenInclude(vs => vs.Votes)
+            .Include(g => g.VotingProcess.Ticket)
             .Include(g => g.Participants)
             .Include(g => g.Tickets.OrderBy(t => t.Identifier))
             .Include(g => g.VotingResults)

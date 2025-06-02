@@ -9,5 +9,6 @@ public record CreateGameResponse(
 );
 
 public record CreateGameSettingResponse(
-    bool IsAutoRevealCards
+    bool IsAutoRevealCards,
+    int? AutoRevealPeriod
 );

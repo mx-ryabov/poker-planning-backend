@@ -2,7 +2,7 @@
 using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Domain.src.Common.DTO;
 
-namespace PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
+namespace PokerPlanning.Application.src.GameFeature.Commands.UpdateTicket;
 
 public record UpdateTicketCommand(
     Guid TicketId,

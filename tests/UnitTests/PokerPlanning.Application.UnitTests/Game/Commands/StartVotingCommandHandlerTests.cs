@@ -1,12 +1,9 @@
-using FluentAssertions;
 using Moq;
 using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Application.src.GameFeature.Commands.DoVote;
-using PokerPlanning.Application.src.GameFeature.Commands.FinishVoting;
+using PokerPlanning.Application.src.Common.Interfaces.Services;
 using PokerPlanning.Application.src.GameFeature.Commands.StartVoting;
 using PokerPlanning.Application.src.GameFeature.Errors;
-using PokerPlanning.Application.src.GameFeature.Results;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.TestUtils.ModelUtils;
@@ -17,15 +14,18 @@ public class StartVotingCommandHandlerTests
 {
     private readonly Mock<IGameRepository> _gameRepository;
     private readonly Mock<IUnitOfWork> _unitOfWork;
+    private readonly Mock<IGameTimer> _gameTimer;
     private readonly StartVotingCommandHandler _handler;
 
     public StartVotingCommandHandlerTests()
     {
         _gameRepository = new Mock<IGameRepository>();
         _unitOfWork = new Mock<IUnitOfWork>();
+        _gameTimer = new Mock<IGameTimer>();
         _handler = new StartVotingCommandHandler(
             _gameRepository.Object,
-            _unitOfWork.Object
+            _unitOfWork.Object,
+            _gameTimer.Object
         );
     }
 
@@ -79,7 +79,8 @@ public class StartVotingCommandUtils
         return new StartVotingCommand(
             GameId: Guid.Parse("80906f84-ace1-404e-a3e7-baf8c06737ac"),
             UserId: Guid.Parse("82e1c6cb-7dcd-40e7-a45b-49b613c1400b"),
-            TicketId: Guid.Parse("667bc009-ba40-4c90-aab8-173b0fc3a5c4")
+            TicketId: Guid.Parse("667bc009-ba40-4c90-aab8-173b0fc3a5c4"),
+            OnTimeIsUp: () => { }
         );
     }
 

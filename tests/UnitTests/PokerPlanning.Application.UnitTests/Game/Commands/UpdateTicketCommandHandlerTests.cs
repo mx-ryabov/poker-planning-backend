@@ -2,10 +2,9 @@ using FluentAssertions;
 using Moq;
 using PokerPlanning.Application.src.Common.Errors;
 using PokerPlanning.Application.src.Common.Interfaces.Persistence;
-using PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
+using PokerPlanning.Application.src.GameFeature.Commands.UpdateTicket;
 using PokerPlanning.Application.src.GameFeature.Errors;
 using PokerPlanning.Application.src.GameFeature.Results;
-using PokerPlanning.Domain.src.Common.DTO;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
@@ -49,7 +48,7 @@ public class UpdateTicketCommandHandlerTests
         var result = await _handler.Handle(command, default);
 
         result.Should().BeOfType<TicketResult>();
-        
+
     }
 
     [Fact]
