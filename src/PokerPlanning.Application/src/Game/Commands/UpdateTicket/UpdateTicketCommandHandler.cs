@@ -4,7 +4,7 @@ using PokerPlanning.Application.src.Common.Interfaces.Persistence;
 using PokerPlanning.Application.src.GameFeature.Errors;
 using PokerPlanning.Application.src.GameFeature.Results;
 
-namespace PokerPlanning.Application.src.GameFeature.Commands.AddTicket;
+namespace PokerPlanning.Application.src.GameFeature.Commands.UpdateTicket;
 
 public class UpdateTicketCommandHandler :
     IRequestHandler<UpdateTicketCommand, TicketResult>

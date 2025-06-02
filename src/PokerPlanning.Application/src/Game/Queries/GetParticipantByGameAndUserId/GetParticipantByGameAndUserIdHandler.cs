@@ -30,7 +30,8 @@ public class GetParticipantByGameAndUserIdHandler : IRequestHandler<GetParticipa
             Vote: participant.Vote is null ? null : new GameVoteResult(
                 Id: participant.Vote.Id,
                 Value: participant.Vote.Value,
-                Suit: participant.Vote.Suit
+                Suit: participant.Vote.Suit,
+                Order: participant.Vote.Order
             )
         );
     }

@@ -11,4 +11,5 @@ public class VotingProcess
     public Ticket? Ticket { get; set; }
     public Guid? TicketId { get; set; }
     public VotingStatus Status { get; set; } = VotingStatus.Inactive;
+    public DateTime? StartTime { get; set; } = null;
 }
