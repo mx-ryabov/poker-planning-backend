@@ -34,7 +34,7 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-app.UseCors(options => options.WithOrigins(new[] { "http://localhost:3000", "https://localhost:3000" }).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+app.UseCors(options => options.WithOrigins(new[] { "http://localhost:3000", "https://localhost:3000", "https://poker-planning.io" }).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionHandler("/error");
