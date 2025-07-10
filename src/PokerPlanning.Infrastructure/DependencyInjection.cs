@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVotingSystemRepository, VotingSystemRepository>();
+        services.AddScoped<IEmailCollectionRepository, EmailCollectionRepository>();
         return services;
     }
 

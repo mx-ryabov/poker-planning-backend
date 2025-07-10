@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PokerPlanning.Api;
 using PokerPlanning.Api.Hubs;
 using PokerPlanning.Application;
@@ -30,7 +31,15 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<PokerPlanningDbContext>();
-        dbContext.Database.EnsureCreated();
+        var IsTesting = builder.Configuration.GetValue<bool>("IsTesting");
+        if (IsTesting)
+        {
+            await dbContext.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            await dbContext.Database.MigrateAsync();
+        }
     }
 }
 

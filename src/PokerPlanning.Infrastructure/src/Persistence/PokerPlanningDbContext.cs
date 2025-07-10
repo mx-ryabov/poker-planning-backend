@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PokerPlanning.Domain.src.BaseModels;
+using PokerPlanning.Domain.src.Models.EmailToNotifyAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate;
 using PokerPlanning.Domain.src.Models.GameAggregate.Entities;
 using PokerPlanning.Domain.src.Models.TicketAggregate;
@@ -29,6 +30,7 @@ public class PokerPlanningDbContext : IdentityDbContext<ApplicationUser, Applica
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<VotingResult> VotingResults { get; set; }
     public DbSet<VotingResultVote> VotingResultVotes { get; set; }
+    public DbSet<EmailToNotify> EmailsToNotify { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

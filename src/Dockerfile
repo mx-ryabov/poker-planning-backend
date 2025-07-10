@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 5011
 
@@ -7,7 +7,7 @@ RUN chmod +x /app/entrypoint.sh
 
 ENV ASPNETCORE_URLS=http://+:5011
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG configuration=Release
 WORKDIR /source
 COPY . .
@@ -16,7 +16,7 @@ RUN dotnet build -c $configuration -o /app/build
 
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet tool install --global dotnet-ef --version 7.0.14
+RUN dotnet tool install --global dotnet-ef --version 9.0.6
 RUN dotnet ef migrations bundle \
     --project PokerPlanning.Infrastructure/PokerPlanning.Infrastructure.csproj \
     --startup-project PokerPlanning.Api/PokerPlanning.Api.csproj \
