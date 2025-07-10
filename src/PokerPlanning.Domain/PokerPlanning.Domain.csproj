@@ -3,7 +3,7 @@
     <ProjectReference Include="..\PokerPlanning.SDK\PokerPlanning.SDK.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Models\GameAggregate\Events\" />
@@ -11,7 +11,7 @@
     <Folder Include="src\Models\TicketAggregate\Events\" />
   </ItemGroup>
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

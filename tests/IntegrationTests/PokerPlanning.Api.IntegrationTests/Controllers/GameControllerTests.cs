@@ -7,7 +7,6 @@ using PokerPlanning.Domain.src.Models.GameAggregate.Enums;
 using PokerPlanning.Domain.src.Models.TicketAggregate.Enums;
 using System.Net;
 using System.Net.Http.Json;
-using System.Net.Sockets;
 
 namespace PokerPlanning.Api.IntegrationTests.Controllers;
 

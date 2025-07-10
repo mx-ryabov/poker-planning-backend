@@ -12,6 +12,7 @@ public abstract class BaseIntegrationTest : IClassFixture<PokerPlanningWebApplic
 
     protected BaseIntegrationTest(PokerPlanningWebApplicationFactory factory)
     {
+        Environment.SetEnvironmentVariable("IsTesting", "true");
         _factory = factory;
         _client = _factory.CreateClient();
         var scope = factory.Services.CreateScope();

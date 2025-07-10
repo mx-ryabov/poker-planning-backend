@@ -18,6 +18,13 @@
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7051;http://localhost:5011"
     },
+    "TestContainer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "TestContainer",
+        "IsTestContainer": "true"
+      }
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
