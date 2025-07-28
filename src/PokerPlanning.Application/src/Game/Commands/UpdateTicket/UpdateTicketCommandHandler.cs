@@ -46,7 +46,7 @@ public class UpdateTicketCommandHandler :
             Description: result.Data!.Description,
             Link: result.Data!.Link,
             Type: result.Data!.Type,
-            Identifier: result.Data!.Identifier,
+            Identifier: result.Data!.Identifier ?? string.Empty,
             Estimation: result.Data!.Estimation
         );
     }

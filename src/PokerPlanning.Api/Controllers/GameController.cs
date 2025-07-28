@@ -218,6 +218,19 @@ public class GameController : ControllerBase
             UserId: Guid.Parse(userId),
             Data: request.Data
         ));
+        if (ticketResult.Estimation is not null)
+        {
+            await _hubContext.Clients
+                .Group(gameId.ToString())
+                .SendAsync(
+                    GameHubMethods.NewEstimationApplied,
+                    new NewEstimationAppliedResponse(
+                        TicketIdentifier: ticketResult.Identifier,
+                        Estimation: ticketResult.Estimation,
+                        TicketId: ticketResult.Id.ToString()
+                    )
+                );
+        }
         await _hubContext.Clients
             .Group(gameId.ToString())
             .SendAsync(

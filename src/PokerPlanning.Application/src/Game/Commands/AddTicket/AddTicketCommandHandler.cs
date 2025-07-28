@@ -50,7 +50,7 @@ public class AddTicketCommandHandler :
             Description: ticket.Description,
             Link: ticket.Link,
             Type: ticket.Type,
-            Identifier: ticket.Identifier,
+            Identifier: ticket.Identifier ?? string.Empty,
             Estimation: ticket.Estimation
         );
     }

@@ -8,6 +8,6 @@ public record TicketResult(
     string Description,
     string? Link,
     TicketType? Type,
-    string? Identifier,
+    string Identifier,
     string? Estimation
 );
