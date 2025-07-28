@@ -20,6 +20,7 @@ using PokerPlanning.Application.src.GameFeature.Commands.RevealCards;
 using PokerPlanning.Application.src.GameFeature.Commands.UpdateTicket;
 using PokerPlanning.Application.src.GameFeature.Commands.UpdateGameSettings;
 using PokerPlanning.Domain.src.Common.DTO;
+using PokerPlanning.Application.src.GameFeature.Commands.CancelVoting;
 
 namespace PokerPlanning.Api.Controllers;
 
@@ -131,6 +132,23 @@ public class GameController : ControllerBase
         return Ok();
     }
 
+    [HttpPut("{gameId}/cancel-voting")]
+    [Authorize]
+    public async Task<ActionResult> CancelVoting([FromRoute] Guid gameId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+
+        await _sender.Send(new CancelVotingCommand(
+            GameId: gameId,
+            UserId: new Guid(userId)
+        ));
+        await _hubContext.Clients
+            .Group(gameId.ToString())
+            .SendAsync(GameHubMethods.VotingCancelled);
+
+        return Ok();
+    }
+
     [HttpPut("{gameId}/finish-voting")]
     [Authorize]
     public async Task<ActionResult> FinishVoting([FromRoute] Guid gameId)
@@ -218,6 +236,19 @@ public class GameController : ControllerBase
             UserId: Guid.Parse(userId),
             Data: request.Data
         ));
+        if (ticketResult.Estimation is not null)
+        {
+            await _hubContext.Clients
+                .Group(gameId.ToString())
+                .SendAsync(
+                    GameHubMethods.NewEstimationApplied,
+                    new NewEstimationAppliedResponse(
+                        TicketIdentifier: ticketResult.Identifier,
+                        Estimation: ticketResult.Estimation,
+                        TicketId: ticketResult.Id.ToString()
+                    )
+                );
+        }
         await _hubContext.Clients
             .Group(gameId.ToString())
             .SendAsync(
