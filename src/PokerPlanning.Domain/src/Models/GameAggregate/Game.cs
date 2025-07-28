@@ -131,6 +131,27 @@ public class Game : AggregateRoot<Guid>
         return UpdateResult.Ok();
     }
 
+    public UpdateResult CancelVotingProcess(Participant initiator)
+    {
+        var canCancel = IsParticipantCanChangeVotingProcess(initiator);
+        if (!canCancel)
+        {
+            return UpdateResult.Error(
+                new() { "This participant isn't allowed to cancel the voting process." }
+            );
+        }
+
+        VotingProcess.Status = VotingStatus.Inactive;
+        VotingProcess.TicketId = null;
+        VotingProcess.StartTime = null;
+        Participants.ForEach(p =>
+        {
+            p.VoteId = null;
+            p.Vote = null;
+        });
+        return UpdateResult.Ok();
+    }
+
     public UpdateResultWithData<VotingResult> FinishVotingProcess(Participant initiator)
     {
         var canFinish = IsParticipantCanChangeVotingProcess(initiator);
