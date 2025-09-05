@@ -72,6 +72,47 @@ public class GameTests
         };
 
     [Theory]
+    [MemberData(nameof(CancelVotingProcessData))]
+    public void Game_CancelVotingProcess_ShouldUpdateVotingProcessOrReturnError(
+        ParticipantRole gameChangerRole,
+        VotingStatus initStatus,
+        bool expectedSuccess,
+        VotingStatus expectedStatus,
+        Guid? expectedTicketId
+    )
+    {
+        var gameChanger = ParticipantUtils.CreateParticipant(gameChangerRole);
+        var game = GameUtils.CreateGame(
+            master: ParticipantUtils.CreateParticipant(ParticipantRole.Master)
+        );
+        game.VotingProcess.Status = initStatus;
+        game.VotingProcess.TicketId = expectedTicketId;
+
+        var result = game.CancelVotingProcess(gameChanger);
+
+        result.Success.Should().Be(expectedSuccess);
+        game.VotingProcess.Status.Should().Be(expectedStatus);
+        game.VotingProcess.TicketId.Should().Be(null);
+    }
+
+    public static IEnumerable<object[]> CancelVotingProcessData =>
+        new List<object[]>
+        {
+            // Master cancels when voting is in progress
+            new object[] { ParticipantRole.Master, VotingStatus.InProgress, true, VotingStatus.Inactive, null },
+            // Master cancels when voting is in progress and ticketId is set
+            new object[] { ParticipantRole.Master, VotingStatus.InProgress, true, VotingStatus.Inactive, Guid.NewGuid() },
+            // Master cancels when voting is revealed
+            new object[] { ParticipantRole.Master, VotingStatus.Revealed, true, VotingStatus.Inactive, null },
+            // Manager cancels when voting is in progress
+            new object[] { ParticipantRole.Manager, VotingStatus.InProgress, true, VotingStatus.Inactive, null },
+            // VotingMember tries to cancel when voting is in progress
+            new object[] { ParticipantRole.VotingMember, VotingStatus.InProgress, false, VotingStatus.InProgress, null },
+            // Spectator tries to cancel when voting is in progress
+            new object[] { ParticipantRole.Spectator, VotingStatus.InProgress, false, VotingStatus.InProgress, null },
+        };
+
+    [Theory]
     [MemberData(nameof(FinishVotingProcessData))]
     public void Game_FinishVotingProcess_ShouldUpdateVotingProcessOrReturnError(
         ParticipantRole gameChangerRole,
